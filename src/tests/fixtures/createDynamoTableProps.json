@@ -1,0 +1,108 @@
+{
+	"expectedBlogPost": {
+		"tableProps": [
+			"blog-post-table",
+			{
+				"tableName": "blog-post-table"
+			}
+		],
+		"dataSourceProps": [
+			"blog-post-table-ds",
+			"A dynamo table datasource for BlogPost"
+		],
+		"GSI": [
+			{
+				"indexName": "byTitle"
+			}
+		]
+	},
+	"expectedComment": {
+		"tableProps": [
+			"comment-table",
+			{
+				"tableName": "comment-table"
+			}
+		],
+		"dataSourceProps": [
+			"comment-table-ds",
+			"A dynamo table datasource for Comment"
+		],
+		"LSI": [
+			{
+				"indexName": "byIds"
+			}
+		]
+	},
+	"input": {
+		"stackMapping": {
+			"BlogPostTable": "BlogPost",
+			"CommentTable": "Comment"
+		},
+		"stacks": {
+			"BlogPost": {
+				"Resources": {
+					"BlogPostTable": {
+						"Properties": {
+							"GlobalSecondaryIndexes": [
+								{
+									"IndexName": "byTitle",
+									"KeySchema": [
+										{
+											"AttributeName": "title",
+											"KeyType": "HASH"
+										}
+									],
+									"Projection": {
+										"ProjectionType": "ALL"
+									},
+									"ProvisionedThroughput": {
+										"Fn::If": [
+											"ShouldUsePayPerRequestBilling",
+											{
+												"Ref": "AWS::NoValue"
+											},
+											{
+												"ReadCapacityUnits": {
+													"Ref": "DynamoDBModelTableReadIOPS"
+												},
+												"WriteCapacityUnits": {
+													"Ref": "DynamoDBModelTableWriteIOPS"
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				}
+			},
+			"Comment": {
+				"Resources": {
+					"CommentTable": {
+						"Properties": {
+							"LocalSecondaryIndexes": [
+								{
+									"IndexName": "byIds",
+									"KeySchema": [
+										{
+											"AttributeName": "id",
+											"KeyType": "HASH"
+										},
+										{
+											"AttributeName": "id2",
+											"KeyType": "RANGE"
+										}
+									],
+									"Projection": {
+										"ProjectionType": "ALL"
+									}
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

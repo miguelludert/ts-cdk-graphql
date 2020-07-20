@@ -1,0 +1,2651 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Index getCodeGenSchema should generate a schema 1`] = `
+Object {
+  "functions": Object {},
+  "pipelineFunctions": Object {},
+  "resolvers": Object {
+    "Mutation.createBlogPost.req.vtl": "## [Start] Set default values. **
+$util.qr($context.args.input.put(\\"id\\", $util.defaultIfNull($ctx.args.input.id, $util.autoId())))
+#set( $createdAt = $util.time.nowISO8601() )
+## Automatically set the createdAt timestamp. **
+$util.qr($context.args.input.put(\\"createdAt\\", $util.defaultIfNull($ctx.args.input.createdAt, $createdAt)))
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put(\\"updatedAt\\", $util.defaultIfNull($ctx.args.input.updatedAt, $createdAt)))
+## [End] Set default values. **
+
+
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id)
+} )
+## [End] Set the primary @key. **
+
+## [Start] Prepare DynamoDB PutItem Request. **
+$util.qr($context.args.input.put(\\"__typename\\", \\"BlogPost\\"))
+#set( $condition = {
+  \\"expression\\": \\"attribute_not_exists(#id)\\",
+  \\"expressionNames\\": {
+      \\"#id\\": \\"id\\"
+  }
+} )
+#if( $context.args.condition )
+  #set( $condition.expressionValues = {} )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $conditionFilterExpressions.expression\\"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  \\"expression\\": $condition.expression,
+  \\"expressionNames\\": $condition.expressionNames
+} )
+#end
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"PutItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\":   $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+} #end,
+  \\"attributeValues\\": $util.dynamodb.toMapValuesJson($context.args.input),
+  \\"condition\\": $util.toJson($condition)
+}
+## [End] Prepare DynamoDB PutItem Request. **",
+    "Mutation.createBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.createComment.req.vtl": "## [Start] Set default values. **
+$util.qr($context.args.input.put(\\"id\\", $util.defaultIfNull($ctx.args.input.id, $util.autoId())))
+#set( $createdAt = $util.time.nowISO8601() )
+## Automatically set the createdAt timestamp. **
+$util.qr($context.args.input.put(\\"createdAt\\", $util.defaultIfNull($ctx.args.input.createdAt, $createdAt)))
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put(\\"updatedAt\\", $util.defaultIfNull($ctx.args.input.updatedAt, $createdAt)))
+## [End] Set default values. **
+
+
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id),
+  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.input.id2)
+} )
+## [End] Set the primary @key. **
+
+## [Start] Prepare DynamoDB PutItem Request. **
+$util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
+#set( $condition = {
+  \\"expression\\": \\"attribute_not_exists(#id)\\",
+  \\"expressionNames\\": {
+      \\"#id\\": \\"id\\"
+  }
+} )
+#if( $context.args.condition )
+  #set( $condition.expressionValues = {} )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $conditionFilterExpressions.expression\\"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  \\"expression\\": $condition.expression,
+  \\"expressionNames\\": $condition.expressionNames
+} )
+#end
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"PutItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\":   $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+} #end,
+  \\"attributeValues\\": $util.dynamodb.toMapValuesJson($context.args.input),
+  \\"condition\\": $util.toJson($condition)
+}
+## [End] Prepare DynamoDB PutItem Request. **",
+    "Mutation.createComment.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.deleteBlogPost.req.vtl": "
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id)
+} )
+## [End] Set the primary @key. **
+#if( $authCondition )
+  #set( $condition = $authCondition )
+  #if( $modelObjectKey )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#id)\\"))
+    $util.qr($condition.expressionNames.put(\\"#id\\", \\"id\\"))
+  #end
+#else
+  #if( $modelObjectKey )
+    #set( $condition = {
+  \\"expression\\": \\"\\",
+  \\"expressionNames\\": {}
+} )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      #if( $velocityCount == 1 )
+        $util.qr($condition.put(\\"expression\\", \\"attribute_exists(#keyCondition$velocityCount)\\"))
+      #else
+        $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      #end
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    #set( $condition = {
+  \\"expression\\": \\"attribute_exists(#id)\\",
+  \\"expressionNames\\": {
+      \\"#id\\": \\"id\\"
+  }
+} )
+  #end
+#end
+#if( $versionedCondition )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $versionedCondition.expression\\"))
+  $util.qr($condition.expressionNames.putAll($versionedCondition.expressionNames))
+  #set( $expressionValues = $util.defaultIfNull($condition.expressionValues, {}) )
+  $util.qr($expressionValues.putAll($versionedCondition.expressionValues))
+  #set( $condition.expressionValues = $expressionValues )
+#end
+#if( $context.args.condition )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $conditionFilterExpressions.expression\\"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  #set( $conditionExpressionValues = $util.defaultIfNull($condition.expressionValues, {}) )
+  $util.qr($conditionExpressionValues.putAll($conditionFilterExpressions.expressionValues))
+  #set( $condition.expressionValues = $conditionExpressionValues )
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  \\"expression\\": $condition.expression,
+  \\"expressionNames\\": $condition.expressionNames
+} )
+#end
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"DeleteItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+} #end,
+  \\"condition\\": $util.toJson($condition)
+}",
+    "Mutation.deleteBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.deleteComment.req.vtl": "
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id),
+  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.input.id2)
+} )
+## [End] Set the primary @key. **
+#if( $authCondition )
+  #set( $condition = $authCondition )
+  #if( $modelObjectKey )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#id)\\"))
+    $util.qr($condition.expressionNames.put(\\"#id\\", \\"id\\"))
+  #end
+#else
+  #if( $modelObjectKey )
+    #set( $condition = {
+  \\"expression\\": \\"\\",
+  \\"expressionNames\\": {}
+} )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      #if( $velocityCount == 1 )
+        $util.qr($condition.put(\\"expression\\", \\"attribute_exists(#keyCondition$velocityCount)\\"))
+      #else
+        $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      #end
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    #set( $condition = {
+  \\"expression\\": \\"attribute_exists(#id)\\",
+  \\"expressionNames\\": {
+      \\"#id\\": \\"id\\"
+  }
+} )
+  #end
+#end
+#if( $versionedCondition )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $versionedCondition.expression\\"))
+  $util.qr($condition.expressionNames.putAll($versionedCondition.expressionNames))
+  #set( $expressionValues = $util.defaultIfNull($condition.expressionValues, {}) )
+  $util.qr($expressionValues.putAll($versionedCondition.expressionValues))
+  #set( $condition.expressionValues = $expressionValues )
+#end
+#if( $context.args.condition )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $conditionFilterExpressions.expression\\"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  #set( $conditionExpressionValues = $util.defaultIfNull($condition.expressionValues, {}) )
+  $util.qr($conditionExpressionValues.putAll($conditionFilterExpressions.expressionValues))
+  #set( $condition.expressionValues = $conditionExpressionValues )
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  \\"expression\\": $condition.expression,
+  \\"expressionNames\\": $condition.expressionNames
+} )
+#end
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"DeleteItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+} #end,
+  \\"condition\\": $util.toJson($condition)
+}",
+    "Mutation.deleteComment.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.updateBlogPost.req.vtl": "
+
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id)
+} )
+## [End] Set the primary @key. **
+
+#if( $authCondition && $authCondition.expression != \\"\\" )
+  #set( $condition = $authCondition )
+  #if( $modelObjectKey )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#id)\\"))
+    $util.qr($condition.expressionNames.put(\\"#id\\", \\"id\\"))
+  #end
+#else
+  #if( $modelObjectKey )
+    #set( $condition = {
+  \\"expression\\": \\"\\",
+  \\"expressionNames\\": {},
+  \\"expressionValues\\": {}
+} )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      #if( $velocityCount == 1 )
+        $util.qr($condition.put(\\"expression\\", \\"attribute_exists(#keyCondition$velocityCount)\\"))
+      #else
+        $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      #end
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    #set( $condition = {
+  \\"expression\\": \\"attribute_exists(#id)\\",
+  \\"expressionNames\\": {
+      \\"#id\\": \\"id\\"
+  },
+  \\"expressionValues\\": {}
+} )
+  #end
+#end
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put(\\"updatedAt\\", $util.defaultIfNull($ctx.args.input.updatedAt, $util.time.nowISO8601())))
+$util.qr($context.args.input.put(\\"__typename\\", \\"BlogPost\\"))
+## Update condition if type is @versioned **
+#if( $versionedCondition )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $versionedCondition.expression\\"))
+  $util.qr($condition.expressionNames.putAll($versionedCondition.expressionNames))
+  $util.qr($condition.expressionValues.putAll($versionedCondition.expressionValues))
+#end
+#if( $context.args.condition )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $conditionFilterExpressions.expression\\"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  \\"expression\\": $condition.expression,
+  \\"expressionNames\\": $condition.expressionNames
+} )
+#end
+#set( $expNames = {} )
+#set( $expValues = {} )
+#set( $expSet = {} )
+#set( $expAdd = {} )
+#set( $expRemove = [] )
+#if( $modelObjectKey )
+  #set( $keyFields = [] )
+  #foreach( $entry in $modelObjectKey.entrySet() )
+    $util.qr($keyFields.add(\\"$entry.key\\"))
+  #end
+#else
+  #set( $keyFields = [\\"id\\"] )
+#end
+#foreach( $entry in $util.map.copyAndRemoveAllKeys($context.args.input, $keyFields).entrySet() )
+  #if( !$util.isNull($dynamodbNameOverrideMap) && $dynamodbNameOverrideMap.containsKey(\\"$entry.key\\") )
+    #set( $entryKeyAttributeName = $dynamodbNameOverrideMap.get(\\"$entry.key\\") )
+  #else
+    #set( $entryKeyAttributeName = $entry.key )
+  #end
+  #if( $util.isNull($entry.value) )
+    #set( $discard = $expRemove.add(\\"#$entryKeyAttributeName\\") )
+    $util.qr($expNames.put(\\"#$entryKeyAttributeName\\", \\"$entry.key\\"))
+  #else
+    $util.qr($expSet.put(\\"#$entryKeyAttributeName\\", \\":$entryKeyAttributeName\\"))
+    $util.qr($expNames.put(\\"#$entryKeyAttributeName\\", \\"$entry.key\\"))
+    $util.qr($expValues.put(\\":$entryKeyAttributeName\\", $util.dynamodb.toDynamoDB($entry.value)))
+  #end
+#end
+#set( $expression = \\"\\" )
+#if( !$expSet.isEmpty() )
+  #set( $expression = \\"SET\\" )
+  #foreach( $entry in $expSet.entrySet() )
+    #set( $expression = \\"$expression $entry.key = $entry.value\\" )
+    #if( $foreach.hasNext() )
+      #set( $expression = \\"$expression,\\" )
+    #end
+  #end
+#end
+#if( !$expAdd.isEmpty() )
+  #set( $expression = \\"$expression ADD\\" )
+  #foreach( $entry in $expAdd.entrySet() )
+    #set( $expression = \\"$expression $entry.key $entry.value\\" )
+    #if( $foreach.hasNext() )
+      #set( $expression = \\"$expression,\\" )
+    #end
+  #end
+#end
+#if( !$expRemove.isEmpty() )
+  #set( $expression = \\"$expression REMOVE\\" )
+  #foreach( $entry in $expRemove )
+    #set( $expression = \\"$expression $entry\\" )
+    #if( $foreach.hasNext() )
+      #set( $expression = \\"$expression,\\" )
+    #end
+  #end
+#end
+#set( $update = {} )
+$util.qr($update.put(\\"expression\\", \\"$expression\\"))
+#if( !$expNames.isEmpty() )
+  $util.qr($update.put(\\"expressionNames\\", $expNames))
+#end
+#if( !$expValues.isEmpty() )
+  $util.qr($update.put(\\"expressionValues\\", $expValues))
+#end
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"UpdateItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\": {
+      \\"S\\": $util.toJson($context.args.input.id)
+  }
+} #end,
+  \\"update\\": $util.toJson($update),
+  \\"condition\\": $util.toJson($condition)
+}",
+    "Mutation.updateBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.updateComment.req.vtl": "
+
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id),
+  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.input.id2)
+} )
+## [End] Set the primary @key. **
+
+#if( $authCondition && $authCondition.expression != \\"\\" )
+  #set( $condition = $authCondition )
+  #if( $modelObjectKey )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#id)\\"))
+    $util.qr($condition.expressionNames.put(\\"#id\\", \\"id\\"))
+  #end
+#else
+  #if( $modelObjectKey )
+    #set( $condition = {
+  \\"expression\\": \\"\\",
+  \\"expressionNames\\": {},
+  \\"expressionValues\\": {}
+} )
+    #foreach( $entry in $modelObjectKey.entrySet() )
+      #if( $velocityCount == 1 )
+        $util.qr($condition.put(\\"expression\\", \\"attribute_exists(#keyCondition$velocityCount)\\"))
+      #else
+        $util.qr($condition.put(\\"expression\\", \\"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\\"))
+      #end
+      $util.qr($condition.expressionNames.put(\\"#keyCondition$velocityCount\\", \\"$entry.key\\"))
+    #end
+  #else
+    #set( $condition = {
+  \\"expression\\": \\"attribute_exists(#id)\\",
+  \\"expressionNames\\": {
+      \\"#id\\": \\"id\\"
+  },
+  \\"expressionValues\\": {}
+} )
+  #end
+#end
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put(\\"updatedAt\\", $util.defaultIfNull($ctx.args.input.updatedAt, $util.time.nowISO8601())))
+$util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
+## Update condition if type is @versioned **
+#if( $versionedCondition )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $versionedCondition.expression\\"))
+  $util.qr($condition.expressionNames.putAll($versionedCondition.expressionNames))
+  $util.qr($condition.expressionValues.putAll($versionedCondition.expressionValues))
+#end
+#if( $context.args.condition )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put(\\"expression\\", \\"($condition.expression) AND $conditionFilterExpressions.expression\\"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  \\"expression\\": $condition.expression,
+  \\"expressionNames\\": $condition.expressionNames
+} )
+#end
+#set( $expNames = {} )
+#set( $expValues = {} )
+#set( $expSet = {} )
+#set( $expAdd = {} )
+#set( $expRemove = [] )
+#if( $modelObjectKey )
+  #set( $keyFields = [] )
+  #foreach( $entry in $modelObjectKey.entrySet() )
+    $util.qr($keyFields.add(\\"$entry.key\\"))
+  #end
+#else
+  #set( $keyFields = [\\"id\\"] )
+#end
+#foreach( $entry in $util.map.copyAndRemoveAllKeys($context.args.input, $keyFields).entrySet() )
+  #if( !$util.isNull($dynamodbNameOverrideMap) && $dynamodbNameOverrideMap.containsKey(\\"$entry.key\\") )
+    #set( $entryKeyAttributeName = $dynamodbNameOverrideMap.get(\\"$entry.key\\") )
+  #else
+    #set( $entryKeyAttributeName = $entry.key )
+  #end
+  #if( $util.isNull($entry.value) )
+    #set( $discard = $expRemove.add(\\"#$entryKeyAttributeName\\") )
+    $util.qr($expNames.put(\\"#$entryKeyAttributeName\\", \\"$entry.key\\"))
+  #else
+    $util.qr($expSet.put(\\"#$entryKeyAttributeName\\", \\":$entryKeyAttributeName\\"))
+    $util.qr($expNames.put(\\"#$entryKeyAttributeName\\", \\"$entry.key\\"))
+    $util.qr($expValues.put(\\":$entryKeyAttributeName\\", $util.dynamodb.toDynamoDB($entry.value)))
+  #end
+#end
+#set( $expression = \\"\\" )
+#if( !$expSet.isEmpty() )
+  #set( $expression = \\"SET\\" )
+  #foreach( $entry in $expSet.entrySet() )
+    #set( $expression = \\"$expression $entry.key = $entry.value\\" )
+    #if( $foreach.hasNext() )
+      #set( $expression = \\"$expression,\\" )
+    #end
+  #end
+#end
+#if( !$expAdd.isEmpty() )
+  #set( $expression = \\"$expression ADD\\" )
+  #foreach( $entry in $expAdd.entrySet() )
+    #set( $expression = \\"$expression $entry.key $entry.value\\" )
+    #if( $foreach.hasNext() )
+      #set( $expression = \\"$expression,\\" )
+    #end
+  #end
+#end
+#if( !$expRemove.isEmpty() )
+  #set( $expression = \\"$expression REMOVE\\" )
+  #foreach( $entry in $expRemove )
+    #set( $expression = \\"$expression $entry\\" )
+    #if( $foreach.hasNext() )
+      #set( $expression = \\"$expression,\\" )
+    #end
+  #end
+#end
+#set( $update = {} )
+$util.qr($update.put(\\"expression\\", \\"$expression\\"))
+#if( !$expNames.isEmpty() )
+  $util.qr($update.put(\\"expressionNames\\", $expNames))
+#end
+#if( !$expValues.isEmpty() )
+  $util.qr($update.put(\\"expressionValues\\", $expValues))
+#end
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"UpdateItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\": {
+      \\"S\\": $util.toJson($context.args.input.id)
+  }
+} #end,
+  \\"update\\": $util.toJson($update),
+  \\"condition\\": $util.toJson($condition)
+}",
+    "Mutation.updateComment.res.vtl": "$util.toJson($ctx.result)",
+    "Query.getBlogPost.req.vtl": "## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.id)
+} )
+## [End] Set the primary @key. **
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"GetItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+} #end
+}",
+    "Query.getBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Query.getComment.req.vtl": "## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.id),
+  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.id2)
+} )
+## [End] Set the primary @key. **
+{
+  \\"version\\": \\"2017-02-28\\",
+  \\"operation\\": \\"GetItem\\",
+  \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+} #end
+}",
+    "Query.getComment.res.vtl": "$util.toJson($ctx.result)",
+    "Query.listBlogPosts.req.vtl": "## [Start] Set query expression for @key **
+#if( !$util.isNull($ctx.args.sortDirection) )
+  $util.error(\\"sortDirection is not supported for List operations without a Sort key defined.\\", \\"InvalidArgumentsError\\")
+#end
+#set( $modelQueryExpression = {} )
+#if( !$util.isNull($ctx.args.id) )
+  #set( $modelQueryExpression.expression = \\"#id = :id\\" )
+  #set( $modelQueryExpression.expressionNames = {
+  \\"#id\\": \\"id\\"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  \\":id\\": {
+      \\"S\\": \\"$ctx.args.id\\"
+  }
+} )
+#end
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 100) )
+#set( $ListRequest = {
+  \\"version\\": \\"2017-02-28\\",
+  \\"limit\\": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = $context.args.nextToken )
+#end
+#if( $context.args.filter )
+  #set( $ListRequest.filter = $util.parseJson(\\"$util.transform.toDynamoDBFilterExpression($ctx.args.filter)\\") )
+#end
+#if( !$util.isNull($modelQueryExpression)
+                        && !$util.isNullOrEmpty($modelQueryExpression.expression) )
+  $util.qr($ListRequest.put(\\"operation\\", \\"Query\\"))
+  $util.qr($ListRequest.put(\\"query\\", $modelQueryExpression))
+  #if( !$util.isNull($ctx.args.sortDirection) && $ctx.args.sortDirection == \\"DESC\\" )
+    #set( $ListRequest.scanIndexForward = false )
+  #else
+    #set( $ListRequest.scanIndexForward = true )
+  #end
+#else
+  $util.qr($ListRequest.put(\\"operation\\", \\"Scan\\"))
+#end
+$util.toJson($ListRequest)",
+    "Query.listBlogPosts.res.vtl": "$util.toJson($ctx.result)",
+    "Query.listComments.req.vtl": "## [Start] Set query expression for @key **
+#if( $util.isNull($ctx.args.id) && !$util.isNull($ctx.args.sortDirection) )
+  $util.error(\\"When providing argument 'sortDirection' you must also provide argument 'id'.\\", \\"InvalidArgumentsError\\")
+#end
+#set( $modelQueryExpression = {} )
+## [Start] Validate key arguments. **
+#if( !$util.isNull($ctx.args.id2) && $util.isNull($ctx.args.id) )
+  $util.error(\\"When providing argument 'id2' you must also provide arguments id\\", \\"InvalidArgumentsError\\")
+#end
+## [End] Validate key arguments. **
+#if( !$util.isNull($ctx.args.id) )
+  #set( $modelQueryExpression.expression = \\"#id = :id\\" )
+  #set( $modelQueryExpression.expressionNames = {
+  \\"#id\\": \\"id\\"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  \\":id\\": {
+      \\"S\\": \\"$ctx.args.id\\"
+  }
+} )
+#end
+## [Start] Applying Key Condition **
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.beginsWith) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND begins_with(#sortKey, :sortKey)\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.beginsWith\\" }))
+#end
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.between) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey BETWEEN :sortKey0 AND :sortKey1\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey0\\", { \\"S\\": \\"$ctx.args.id2.between[0]\\" }))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey1\\", { \\"S\\": \\"$ctx.args.id2.between[1]\\" }))
+#end
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.eq) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey = :sortKey\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.eq\\" }))
+#end
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.lt) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey < :sortKey\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.lt\\" }))
+#end
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.le) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey <= :sortKey\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.le\\" }))
+#end
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.gt) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey > :sortKey\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.gt\\" }))
+#end
+#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.ge) )
+  #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey >= :sortKey\\" )
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.ge\\" }))
+#end
+## [End] Applying Key Condition **
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 100) )
+#set( $ListRequest = {
+  \\"version\\": \\"2017-02-28\\",
+  \\"limit\\": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = $context.args.nextToken )
+#end
+#if( $context.args.filter )
+  #set( $ListRequest.filter = $util.parseJson(\\"$util.transform.toDynamoDBFilterExpression($ctx.args.filter)\\") )
+#end
+#if( !$util.isNull($modelQueryExpression)
+                        && !$util.isNullOrEmpty($modelQueryExpression.expression) )
+  $util.qr($ListRequest.put(\\"operation\\", \\"Query\\"))
+  $util.qr($ListRequest.put(\\"query\\", $modelQueryExpression))
+  #if( !$util.isNull($ctx.args.sortDirection) && $ctx.args.sortDirection == \\"DESC\\" )
+    #set( $ListRequest.scanIndexForward = false )
+  #else
+    #set( $ListRequest.scanIndexForward = true )
+  #end
+#else
+  $util.qr($ListRequest.put(\\"operation\\", \\"Scan\\"))
+#end
+$util.toJson($ListRequest)",
+    "Query.listComments.res.vtl": "$util.toJson($ctx.result)",
+  },
+  "schema": "type BlogPost {
+  id: String!
+  title: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Comment {
+  id: String!
+  id2: String!
+  body: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelBlogPostConnection {
+  items: [BlogPost]
+  nextToken: String
+}
+
+input ModelStringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+input ModelIDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input ModelIntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+input ModelFloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+}
+
+input ModelBooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelBlogPostFilterInput {
+  id: ModelStringFilterInput
+  title: ModelStringFilterInput
+  and: [ModelBlogPostFilterInput]
+  or: [ModelBlogPostFilterInput]
+  not: ModelBlogPostFilterInput
+}
+
+type Query {
+  getBlogPost(id: String!): BlogPost
+  listBlogPosts(id: String, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection
+  getComment(id: String!, id2: String!): Comment
+  listComments(id: String, id2: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection
+}
+
+input CreateBlogPostInput {
+  id: String!
+  title: String
+}
+
+input UpdateBlogPostInput {
+  id: String!
+  title: String
+}
+
+input DeleteBlogPostInput {
+  id: String!
+}
+
+type Mutation {
+  createBlogPost(input: CreateBlogPostInput!): BlogPost
+  updateBlogPost(input: UpdateBlogPostInput!): BlogPost
+  deleteBlogPost(input: DeleteBlogPostInput!): BlogPost
+  createComment(input: CreateCommentInput!): Comment
+  updateComment(input: UpdateCommentInput!): Comment
+  deleteComment(input: DeleteCommentInput!): Comment
+}
+
+type Subscription {
+  onCreateBlogPost: BlogPost @aws_subscribe(mutations: [\\"createBlogPost\\"])
+  onUpdateBlogPost: BlogPost @aws_subscribe(mutations: [\\"updateBlogPost\\"])
+  onDeleteBlogPost: BlogPost @aws_subscribe(mutations: [\\"deleteBlogPost\\"])
+  onCreateComment: Comment @aws_subscribe(mutations: [\\"createComment\\"])
+  onUpdateComment: Comment @aws_subscribe(mutations: [\\"updateComment\\"])
+  onDeleteComment: Comment @aws_subscribe(mutations: [\\"deleteComment\\"])
+}
+
+type ModelCommentConnection {
+  items: [Comment]
+  nextToken: String
+}
+
+input ModelCommentFilterInput {
+  id: ModelStringFilterInput
+  id2: ModelStringFilterInput
+  body: ModelStringFilterInput
+  and: [ModelCommentFilterInput]
+  or: [ModelCommentFilterInput]
+  not: ModelCommentFilterInput
+}
+
+input CreateCommentInput {
+  id: String!
+  id2: String!
+  body: String
+}
+
+input UpdateCommentInput {
+  id: String!
+  id2: String!
+  body: String
+}
+
+input DeleteCommentInput {
+  id: String!
+  id2: String!
+}
+
+input ModelStringKeyConditionInput {
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  between: [String]
+  beginsWith: String
+}
+",
+  "stackMapping": Object {
+    "BlogPostDataSource": "BlogPost",
+    "BlogPostIAMRole": "BlogPost",
+    "BlogPostTable": "BlogPost",
+    "CommentDataSource": "Comment",
+    "CommentIAMRole": "Comment",
+    "CommentTable": "Comment",
+    "CreateBlogPostResolver": "BlogPost",
+    "CreateCommentResolver": "Comment",
+    "DeleteBlogPostResolver": "BlogPost",
+    "DeleteCommentResolver": "Comment",
+    "GetAttBlogPostDataSourceName": "BlogPost",
+    "GetAttBlogPostTableName": "BlogPost",
+    "GetAttBlogPostTableStreamArn": "BlogPost",
+    "GetAttCommentDataSourceName": "Comment",
+    "GetAttCommentTableName": "Comment",
+    "GetAttCommentTableStreamArn": "Comment",
+    "GetBlogPostResolver": "BlogPost",
+    "GetCommentResolver": "Comment",
+    "GraphQLAPI": "root",
+    "GraphQLAPIEndpointOutput": "root",
+    "GraphQLAPIIdOutput": "root",
+    "GraphQLAPIKey": "root",
+    "GraphQLAPIKeyOutput": "root",
+    "GraphQLSchema": "root",
+    "ListBlogPostResolver": "BlogPost",
+    "ListCommentResolver": "Comment",
+    "UpdateBlogPostResolver": "BlogPost",
+    "UpdateCommentResolver": "Comment",
+  },
+  "stacks": Object {
+    "BlogPost": Object {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Conditions": Object {
+        "APIKeyExpirationEpochIsPositive": Object {
+          "Fn::And": Array [
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "APIKeyExpirationEpoch",
+                    },
+                    -1,
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "APIKeyExpirationEpoch",
+                    },
+                    0,
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        "HasEnvironmentParameter": Object {
+          "Fn::Not": Array [
+            Object {
+              "Fn::Equals": Array [
+                Object {
+                  "Ref": "env",
+                },
+                "NONE",
+              ],
+            },
+          ],
+        },
+        "ShouldCreateAPIKey": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "CreateAPIKey",
+            },
+            1,
+          ],
+        },
+        "ShouldUsePayPerRequestBilling": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBBillingMode",
+            },
+            "PAY_PER_REQUEST",
+          ],
+        },
+        "ShouldUsePointInTimeRecovery": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBEnablePointInTimeRecovery",
+            },
+            "true",
+          ],
+        },
+        "ShouldUseServerSideEncryption": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBEnableServerSideEncryption",
+            },
+            "true",
+          ],
+        },
+      },
+      "Description": "An auto-generated nested stack.",
+      "Mappings": Object {},
+      "Metadata": Object {},
+      "Outputs": Object {
+        "GetAttBlogPostDataSourceName": Object {
+          "Description": "Your model DataSource name.",
+          "Export": Object {
+            "Name": Object {
+              "Fn::Join": Array [
+                ":",
+                Array [
+                  Object {
+                    "Ref": "AppSyncApiId",
+                  },
+                  "GetAtt",
+                  "BlogPostDataSource",
+                  "Name",
+                ],
+              ],
+            },
+          },
+          "Value": Object {
+            "Fn::GetAtt": Array [
+              "BlogPostDataSource",
+              "Name",
+            ],
+          },
+        },
+        "GetAttBlogPostTableName": Object {
+          "Description": "Your DynamoDB table name.",
+          "Export": Object {
+            "Name": Object {
+              "Fn::Join": Array [
+                ":",
+                Array [
+                  Object {
+                    "Ref": "AppSyncApiId",
+                  },
+                  "GetAtt",
+                  "BlogPostTable",
+                  "Name",
+                ],
+              ],
+            },
+          },
+          "Value": Object {
+            "Ref": "BlogPostTable",
+          },
+        },
+        "GetAttBlogPostTableStreamArn": Object {
+          "Description": "Your DynamoDB table StreamArn.",
+          "Export": Object {
+            "Name": Object {
+              "Fn::Join": Array [
+                ":",
+                Array [
+                  Object {
+                    "Ref": "AppSyncApiId",
+                  },
+                  "GetAtt",
+                  "BlogPostTable",
+                  "StreamArn",
+                ],
+              ],
+            },
+          },
+          "Value": Object {
+            "Fn::GetAtt": Array [
+              "BlogPostTable",
+              "StreamArn",
+            ],
+          },
+        },
+      },
+      "Parameters": Object {
+        "APIKeyExpirationEpoch": Object {
+          "Default": 0,
+          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
+          "MinValue": -1,
+          "Type": "Number",
+        },
+        "AppSyncApiId": StringParameter {
+          "Description": "The id of the AppSync API associated with this project.",
+          "Type": "String",
+        },
+        "AppSyncApiName": Object {
+          "Default": "AppSyncSimpleTransform",
+          "Description": "The name of the AppSync API",
+          "Type": "String",
+        },
+        "AuthCognitoUserPoolId": Object {
+          "Default": "NONE",
+          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
+          "Type": "String",
+        },
+        "CreateAPIKey": Object {
+          "Default": 0,
+          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
+          "MaxValue": 1,
+          "MinValue": 0,
+          "Type": "Number",
+        },
+        "DynamoDBBillingMode": Object {
+          "AllowedValues": Array [
+            "PAY_PER_REQUEST",
+            "PROVISIONED",
+          ],
+          "Default": "PAY_PER_REQUEST",
+          "Description": "Configure @model types to create DynamoDB tables with PAY_PER_REQUEST or PROVISIONED billing modes.",
+          "Type": "String",
+        },
+        "DynamoDBEnablePointInTimeRecovery": Object {
+          "AllowedValues": Array [
+            "true",
+            "false",
+          ],
+          "Default": "false",
+          "Description": "Whether to enable Point in Time Recovery on the table",
+          "Type": "String",
+        },
+        "DynamoDBEnableServerSideEncryption": Object {
+          "AllowedValues": Array [
+            "true",
+            "false",
+          ],
+          "Default": "true",
+          "Description": "Enable server side encryption powered by KMS.",
+          "Type": "String",
+        },
+        "DynamoDBModelTableReadIOPS": Object {
+          "Default": 5,
+          "Description": "The number of read IOPS the table should support.",
+          "Type": "Number",
+        },
+        "DynamoDBModelTableWriteIOPS": Object {
+          "Default": 5,
+          "Description": "The number of write IOPS the table should support.",
+          "Type": "Number",
+        },
+        "GetAttGraphQLAPIApiId": StringParameter {
+          "Description": "Auto-generated parameter that forwards Fn.GetAtt(GraphQLAPI, ApiId) through to nested stacks.",
+          "Type": "String",
+        },
+        "S3DeploymentBucket": Object {
+          "Description": "The S3 bucket containing all deployment assets for the project.",
+          "Type": "String",
+        },
+        "S3DeploymentRootKey": Object {
+          "Description": "An S3 key relative to the S3DeploymentBucket that points to the root of the deployment directory.",
+          "Type": "String",
+        },
+        "env": Object {
+          "Default": "NONE",
+          "Description": "The environment name. e.g. Dev, Test, or Production",
+          "Type": "String",
+        },
+      },
+      "Resources": Object {
+        "BlogPostDataSource": Object {
+          "DependsOn": Array [
+            "BlogPostIAMRole",
+          ],
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DynamoDBConfig": Object {
+              "AwsRegion": Object {
+                "Ref": "AWS::Region",
+              },
+              "TableName": Object {
+                "Fn::If": Array [
+                  "HasEnvironmentParameter",
+                  Object {
+                    "Fn::Join": Array [
+                      "-",
+                      Array [
+                        "BlogPost",
+                        Object {
+                          "Ref": "GetAttGraphQLAPIApiId",
+                        },
+                        Object {
+                          "Ref": "env",
+                        },
+                      ],
+                    ],
+                  },
+                  Object {
+                    "Fn::Join": Array [
+                      "-",
+                      Array [
+                        "BlogPost",
+                        Object {
+                          "Ref": "GetAttGraphQLAPIApiId",
+                        },
+                      ],
+                    ],
+                  },
+                ],
+              },
+            },
+            "Name": "BlogPostTable",
+            "ServiceRoleArn": Object {
+              "Fn::GetAtt": Array [
+                "BlogPostIAMRole",
+                "Arn",
+              ],
+            },
+            "Type": "AMAZON_DYNAMODB",
+          },
+          "Type": "AWS::AppSync::DataSource",
+        },
+        "BlogPostIAMRole": Object {
+          "Properties": Object {
+            "AssumeRolePolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": Object {
+                    "Service": "appsync.amazonaws.com",
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "Policies": Array [
+              Object {
+                "PolicyDocument": Object {
+                  "Statement": Array [
+                    Object {
+                      "Action": Array [
+                        "dynamodb:BatchGetItem",
+                        "dynamodb:BatchWriteItem",
+                        "dynamodb:PutItem",
+                        "dynamodb:DeleteItem",
+                        "dynamodb:GetItem",
+                        "dynamodb:Scan",
+                        "dynamodb:Query",
+                        "dynamodb:UpdateItem",
+                      ],
+                      "Effect": "Allow",
+                      "Resource": Array [
+                        Object {
+                          "Fn::Sub": Array [
+                            "arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${tablename}",
+                            Object {
+                              "tablename": Object {
+                                "Fn::If": Array [
+                                  "HasEnvironmentParameter",
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "BlogPost",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                        Object {
+                                          "Ref": "env",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "BlogPost",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                        Object {
+                          "Fn::Sub": Array [
+                            "arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${tablename}/*",
+                            Object {
+                              "tablename": Object {
+                                "Fn::If": Array [
+                                  "HasEnvironmentParameter",
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "BlogPost",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                        Object {
+                                          "Ref": "env",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "BlogPost",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                  "Version": "2012-10-17",
+                },
+                "PolicyName": "DynamoDBAccess",
+              },
+            ],
+            "RoleName": Object {
+              "Fn::If": Array [
+                "HasEnvironmentParameter",
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "BlogPoste8073b",
+                      "role",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                      Object {
+                        "Ref": "env",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "BlogPost6d6095",
+                      "role",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+          "Type": "AWS::IAM::Role",
+        },
+        "BlogPostTable": Object {
+          "DeletionPolicy": "Delete",
+          "Properties": Object {
+            "AttributeDefinitions": Array [
+              Object {
+                "AttributeName": "id",
+                "AttributeType": "S",
+              },
+              Object {
+                "AttributeName": "title",
+                "AttributeType": "S",
+              },
+            ],
+            "BillingMode": Object {
+              "Fn::If": Array [
+                "ShouldUsePayPerRequestBilling",
+                "PAY_PER_REQUEST",
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            "GlobalSecondaryIndexes": Array [
+              Object {
+                "IndexName": "byTitle",
+                "KeySchema": Array [
+                  Object {
+                    "AttributeName": "title",
+                    "KeyType": "HASH",
+                  },
+                ],
+                "Projection": Object {
+                  "ProjectionType": "ALL",
+                },
+                "ProvisionedThroughput": Object {
+                  "Fn::If": Array [
+                    "ShouldUsePayPerRequestBilling",
+                    Object {
+                      "Ref": "AWS::NoValue",
+                    },
+                    Object {
+                      "ReadCapacityUnits": Object {
+                        "Ref": "DynamoDBModelTableReadIOPS",
+                      },
+                      "WriteCapacityUnits": Object {
+                        "Ref": "DynamoDBModelTableWriteIOPS",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+            "KeySchema": Array [
+              Object {
+                "AttributeName": "id",
+                "KeyType": "HASH",
+              },
+            ],
+            "PointInTimeRecoverySpecification": Object {
+              "Fn::If": Array [
+                "ShouldUsePointInTimeRecovery",
+                Object {
+                  "PointInTimeRecoveryEnabled": true,
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            "ProvisionedThroughput": Object {
+              "Fn::If": Array [
+                "ShouldUsePayPerRequestBilling",
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+                Object {
+                  "ReadCapacityUnits": Object {
+                    "Ref": "DynamoDBModelTableReadIOPS",
+                  },
+                  "WriteCapacityUnits": Object {
+                    "Ref": "DynamoDBModelTableWriteIOPS",
+                  },
+                },
+              ],
+            },
+            "SSESpecification": Object {
+              "SSEEnabled": Object {
+                "Fn::If": Array [
+                  "ShouldUseServerSideEncryption",
+                  true,
+                  false,
+                ],
+              },
+            },
+            "StreamSpecification": Object {
+              "StreamViewType": "NEW_AND_OLD_IMAGES",
+            },
+            "TableName": Object {
+              "Fn::If": Array [
+                "HasEnvironmentParameter",
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "BlogPost",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                      Object {
+                        "Ref": "env",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "BlogPost",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+          "Type": "AWS::DynamoDB::Table",
+        },
+        "CreateBlogPostResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "BlogPostDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "createBlogPost",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "createBlogPost",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "createBlogPost",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Mutation",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "DeleteBlogPostResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "BlogPostDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "deleteBlogPost",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "deleteBlogPost",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "deleteBlogPost",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Mutation",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "GetBlogPostResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "BlogPostDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "getBlogPost",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "getBlogPost",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "getBlogPost",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Query",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "ListBlogPostResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "BlogPostDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "listBlogPosts",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "listBlogPosts",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "listBlogPosts",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Query",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "UpdateBlogPostResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "BlogPostDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "updateBlogPost",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "updateBlogPost",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "updateBlogPost",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Mutation",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+      },
+    },
+    "Comment": Object {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Conditions": Object {
+        "APIKeyExpirationEpochIsPositive": Object {
+          "Fn::And": Array [
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "APIKeyExpirationEpoch",
+                    },
+                    -1,
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "APIKeyExpirationEpoch",
+                    },
+                    0,
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        "HasEnvironmentParameter": Object {
+          "Fn::Not": Array [
+            Object {
+              "Fn::Equals": Array [
+                Object {
+                  "Ref": "env",
+                },
+                "NONE",
+              ],
+            },
+          ],
+        },
+        "ShouldCreateAPIKey": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "CreateAPIKey",
+            },
+            1,
+          ],
+        },
+        "ShouldUsePayPerRequestBilling": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBBillingMode",
+            },
+            "PAY_PER_REQUEST",
+          ],
+        },
+        "ShouldUsePointInTimeRecovery": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBEnablePointInTimeRecovery",
+            },
+            "true",
+          ],
+        },
+        "ShouldUseServerSideEncryption": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBEnableServerSideEncryption",
+            },
+            "true",
+          ],
+        },
+      },
+      "Description": "An auto-generated nested stack.",
+      "Mappings": Object {},
+      "Metadata": Object {},
+      "Outputs": Object {
+        "GetAttCommentDataSourceName": Object {
+          "Description": "Your model DataSource name.",
+          "Export": Object {
+            "Name": Object {
+              "Fn::Join": Array [
+                ":",
+                Array [
+                  Object {
+                    "Ref": "AppSyncApiId",
+                  },
+                  "GetAtt",
+                  "CommentDataSource",
+                  "Name",
+                ],
+              ],
+            },
+          },
+          "Value": Object {
+            "Fn::GetAtt": Array [
+              "CommentDataSource",
+              "Name",
+            ],
+          },
+        },
+        "GetAttCommentTableName": Object {
+          "Description": "Your DynamoDB table name.",
+          "Export": Object {
+            "Name": Object {
+              "Fn::Join": Array [
+                ":",
+                Array [
+                  Object {
+                    "Ref": "AppSyncApiId",
+                  },
+                  "GetAtt",
+                  "CommentTable",
+                  "Name",
+                ],
+              ],
+            },
+          },
+          "Value": Object {
+            "Ref": "CommentTable",
+          },
+        },
+        "GetAttCommentTableStreamArn": Object {
+          "Description": "Your DynamoDB table StreamArn.",
+          "Export": Object {
+            "Name": Object {
+              "Fn::Join": Array [
+                ":",
+                Array [
+                  Object {
+                    "Ref": "AppSyncApiId",
+                  },
+                  "GetAtt",
+                  "CommentTable",
+                  "StreamArn",
+                ],
+              ],
+            },
+          },
+          "Value": Object {
+            "Fn::GetAtt": Array [
+              "CommentTable",
+              "StreamArn",
+            ],
+          },
+        },
+      },
+      "Parameters": Object {
+        "APIKeyExpirationEpoch": Object {
+          "Default": 0,
+          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
+          "MinValue": -1,
+          "Type": "Number",
+        },
+        "AppSyncApiId": StringParameter {
+          "Description": "The id of the AppSync API associated with this project.",
+          "Type": "String",
+        },
+        "AppSyncApiName": Object {
+          "Default": "AppSyncSimpleTransform",
+          "Description": "The name of the AppSync API",
+          "Type": "String",
+        },
+        "AuthCognitoUserPoolId": Object {
+          "Default": "NONE",
+          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
+          "Type": "String",
+        },
+        "CreateAPIKey": Object {
+          "Default": 0,
+          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
+          "MaxValue": 1,
+          "MinValue": 0,
+          "Type": "Number",
+        },
+        "DynamoDBBillingMode": Object {
+          "AllowedValues": Array [
+            "PAY_PER_REQUEST",
+            "PROVISIONED",
+          ],
+          "Default": "PAY_PER_REQUEST",
+          "Description": "Configure @model types to create DynamoDB tables with PAY_PER_REQUEST or PROVISIONED billing modes.",
+          "Type": "String",
+        },
+        "DynamoDBEnablePointInTimeRecovery": Object {
+          "AllowedValues": Array [
+            "true",
+            "false",
+          ],
+          "Default": "false",
+          "Description": "Whether to enable Point in Time Recovery on the table",
+          "Type": "String",
+        },
+        "DynamoDBEnableServerSideEncryption": Object {
+          "AllowedValues": Array [
+            "true",
+            "false",
+          ],
+          "Default": "true",
+          "Description": "Enable server side encryption powered by KMS.",
+          "Type": "String",
+        },
+        "DynamoDBModelTableReadIOPS": Object {
+          "Default": 5,
+          "Description": "The number of read IOPS the table should support.",
+          "Type": "Number",
+        },
+        "DynamoDBModelTableWriteIOPS": Object {
+          "Default": 5,
+          "Description": "The number of write IOPS the table should support.",
+          "Type": "Number",
+        },
+        "GetAttGraphQLAPIApiId": StringParameter {
+          "Description": "Auto-generated parameter that forwards Fn.GetAtt(GraphQLAPI, ApiId) through to nested stacks.",
+          "Type": "String",
+        },
+        "S3DeploymentBucket": Object {
+          "Description": "The S3 bucket containing all deployment assets for the project.",
+          "Type": "String",
+        },
+        "S3DeploymentRootKey": Object {
+          "Description": "An S3 key relative to the S3DeploymentBucket that points to the root of the deployment directory.",
+          "Type": "String",
+        },
+        "env": Object {
+          "Default": "NONE",
+          "Description": "The environment name. e.g. Dev, Test, or Production",
+          "Type": "String",
+        },
+      },
+      "Resources": Object {
+        "CommentDataSource": Object {
+          "DependsOn": Array [
+            "CommentIAMRole",
+          ],
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DynamoDBConfig": Object {
+              "AwsRegion": Object {
+                "Ref": "AWS::Region",
+              },
+              "TableName": Object {
+                "Fn::If": Array [
+                  "HasEnvironmentParameter",
+                  Object {
+                    "Fn::Join": Array [
+                      "-",
+                      Array [
+                        "Comment",
+                        Object {
+                          "Ref": "GetAttGraphQLAPIApiId",
+                        },
+                        Object {
+                          "Ref": "env",
+                        },
+                      ],
+                    ],
+                  },
+                  Object {
+                    "Fn::Join": Array [
+                      "-",
+                      Array [
+                        "Comment",
+                        Object {
+                          "Ref": "GetAttGraphQLAPIApiId",
+                        },
+                      ],
+                    ],
+                  },
+                ],
+              },
+            },
+            "Name": "CommentTable",
+            "ServiceRoleArn": Object {
+              "Fn::GetAtt": Array [
+                "CommentIAMRole",
+                "Arn",
+              ],
+            },
+            "Type": "AMAZON_DYNAMODB",
+          },
+          "Type": "AWS::AppSync::DataSource",
+        },
+        "CommentIAMRole": Object {
+          "Properties": Object {
+            "AssumeRolePolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": Object {
+                    "Service": "appsync.amazonaws.com",
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "Policies": Array [
+              Object {
+                "PolicyDocument": Object {
+                  "Statement": Array [
+                    Object {
+                      "Action": Array [
+                        "dynamodb:BatchGetItem",
+                        "dynamodb:BatchWriteItem",
+                        "dynamodb:PutItem",
+                        "dynamodb:DeleteItem",
+                        "dynamodb:GetItem",
+                        "dynamodb:Scan",
+                        "dynamodb:Query",
+                        "dynamodb:UpdateItem",
+                      ],
+                      "Effect": "Allow",
+                      "Resource": Array [
+                        Object {
+                          "Fn::Sub": Array [
+                            "arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${tablename}",
+                            Object {
+                              "tablename": Object {
+                                "Fn::If": Array [
+                                  "HasEnvironmentParameter",
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "Comment",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                        Object {
+                                          "Ref": "env",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "Comment",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                        Object {
+                          "Fn::Sub": Array [
+                            "arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${tablename}/*",
+                            Object {
+                              "tablename": Object {
+                                "Fn::If": Array [
+                                  "HasEnvironmentParameter",
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "Comment",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                        Object {
+                                          "Ref": "env",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                  Object {
+                                    "Fn::Join": Array [
+                                      "-",
+                                      Array [
+                                        "Comment",
+                                        Object {
+                                          "Ref": "GetAttGraphQLAPIApiId",
+                                        },
+                                      ],
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                  "Version": "2012-10-17",
+                },
+                "PolicyName": "DynamoDBAccess",
+              },
+            ],
+            "RoleName": Object {
+              "Fn::If": Array [
+                "HasEnvironmentParameter",
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "Comment82f00f",
+                      "role",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                      Object {
+                        "Ref": "env",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "Comment8cf4ef",
+                      "role",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+          "Type": "AWS::IAM::Role",
+        },
+        "CommentTable": Object {
+          "DeletionPolicy": "Delete",
+          "Properties": Object {
+            "AttributeDefinitions": Array [
+              Object {
+                "AttributeName": "id",
+                "AttributeType": "S",
+              },
+              Object {
+                "AttributeName": "id2",
+                "AttributeType": "S",
+              },
+            ],
+            "BillingMode": Object {
+              "Fn::If": Array [
+                "ShouldUsePayPerRequestBilling",
+                "PAY_PER_REQUEST",
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            "KeySchema": Array [
+              Object {
+                "AttributeName": "id",
+                "KeyType": "HASH",
+              },
+              Object {
+                "AttributeName": "id2",
+                "KeyType": "RANGE",
+              },
+            ],
+            "LocalSecondaryIndexes": Array [
+              Object {
+                "IndexName": "byIds",
+                "KeySchema": Array [
+                  Object {
+                    "AttributeName": "id",
+                    "KeyType": "HASH",
+                  },
+                  Object {
+                    "AttributeName": "id2",
+                    "KeyType": "RANGE",
+                  },
+                ],
+                "Projection": Object {
+                  "ProjectionType": "ALL",
+                },
+              },
+            ],
+            "PointInTimeRecoverySpecification": Object {
+              "Fn::If": Array [
+                "ShouldUsePointInTimeRecovery",
+                Object {
+                  "PointInTimeRecoveryEnabled": true,
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            "ProvisionedThroughput": Object {
+              "Fn::If": Array [
+                "ShouldUsePayPerRequestBilling",
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+                Object {
+                  "ReadCapacityUnits": Object {
+                    "Ref": "DynamoDBModelTableReadIOPS",
+                  },
+                  "WriteCapacityUnits": Object {
+                    "Ref": "DynamoDBModelTableWriteIOPS",
+                  },
+                },
+              ],
+            },
+            "SSESpecification": Object {
+              "SSEEnabled": Object {
+                "Fn::If": Array [
+                  "ShouldUseServerSideEncryption",
+                  true,
+                  false,
+                ],
+              },
+            },
+            "StreamSpecification": Object {
+              "StreamViewType": "NEW_AND_OLD_IMAGES",
+            },
+            "TableName": Object {
+              "Fn::If": Array [
+                "HasEnvironmentParameter",
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "Comment",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                      Object {
+                        "Ref": "env",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "Comment",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+          "Type": "AWS::DynamoDB::Table",
+        },
+        "CreateCommentResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "CommentDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "createComment",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "createComment",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "createComment",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Mutation",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "DeleteCommentResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "CommentDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "deleteComment",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "deleteComment",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "deleteComment",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Mutation",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "GetCommentResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "CommentDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "getComment",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "getComment",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "getComment",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Query",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "ListCommentResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "CommentDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "listComments",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "listComments",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "listComments",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Query",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "UpdateCommentResolver": Object {
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "GetAttGraphQLAPIApiId",
+            },
+            "DataSourceName": Object {
+              "Fn::GetAtt": Array [
+                "CommentDataSource",
+                "Name",
+              ],
+            },
+            "FieldName": "updateComment",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "updateComment",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Mutation",
+                        "updateComment",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Mutation",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+      },
+    },
+  },
+}
+`;

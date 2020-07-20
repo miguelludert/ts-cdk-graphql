@@ -1,0 +1,26 @@
+{
+  "input": {
+    "resolvers": {
+      "Query.getBlogPost.req.vtl": "GET BLOG POST REQUEST TEMLATE",
+      "Query.getBlogPost.res.vtl": "GET BLOG POST RESPONSE TEMLATE",
+      "Mutation.createBlogPost.req.vtl": "CREATE BLOG POST REQUEST TEMLATE",
+      "Mutation.createBlogPost.res.vtl": "CREATE BLOG POST RESPONSE TEMLATE"
+    }
+  },
+  "expected": {
+    "resolverProps": [
+      {
+        "typeName": "Query",
+        "fieldName": "getBlogPost",
+        "requestMappingTemplate": "GET BLOG POST REQUEST TEMLATE",
+        "responseMappingTemplate": "GET BLOG POST RESPONSE TEMLATE"
+      },
+      {
+        "typeName": "Mutation",
+        "fieldName": "createBlogPost",
+        "requestMappingTemplate": "CREATE BLOG POST REQUEST TEMLATE",
+        "responseMappingTemplate": "CREATE BLOG POST RESPONSE TEMLATE"
+      }
+    ]
+  }
+}

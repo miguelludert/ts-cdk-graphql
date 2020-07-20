@@ -1,0 +1,37 @@
+{
+	"options": {},
+	"scope": {
+		"scope": "scope"
+	},
+	"dynamoParams": {
+		"dataSourceProps": [
+			"oscar-meyer-table-ds",
+			"The data source for table 'oscar-meyer'"
+		],
+		"tableProps": [
+			"oscar-meyer-table",
+			{
+				"tableName": "oscar-meyer",
+				"partitionKey": {},
+				"sortKey": {}
+			}
+		],
+		"GSI": {},
+		"LSI": {},
+		"resolverProps": [
+			{
+				"typeName": "Query",
+				"fieldName": "getBlogPost",
+				"requestMappingTemplate": "GET BLOG POST REQUEST TEMLATE",
+				"responseMappingTemplate": "GET BLOG POST RESPONSE TEMLATE"
+			},
+			{
+				"typeName": "Mutation",
+				"fieldName": "createBlogPost",
+				"requestMappingTemplate": "CREATE BLOG POST REQUEST TEMLATE",
+				"responseMappingTemplate": "CREATE BLOG POST RESPONSE TEMLATE"
+			}
+		]
+	},
+	"expected": {}
+}
