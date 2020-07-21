@@ -4,13 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "test:deploy": "npx babel-node builds/manual-test/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@aws-cdk/aws-appsync": "^1.51.0",
     "@aws-cdk/aws-dynamodb": "^1.51.0",
+    "@aws-cdk/core": "^1.53.0",
     "change-case": "^4.1.1",
     "graphql-auth-transformer": "^6.18.4",
     "graphql-connection-transformer": "^4.18.3",
@@ -23,8 +25,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
+    "@babel/node": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
+    "@babel/register": "^7.10.5",
     "babel-jest": "^26.1.0",
+    "babel-node": "0.0.1-security",
     "jest": "^26.1.0"
   }
 }

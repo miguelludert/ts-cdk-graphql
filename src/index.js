@@ -9,17 +9,17 @@ import { readFileSync, writeFileSync } from "fs";
 import { map, endsWith, reduce, toPairs } from "ramda";
 import { paramCase, camelCase } from "change-case";
 import * as dynamo from "./dynamo";
+import { Stack } from "@aws-cdk/core";
+import { GraphQLApi } from "@aws-cdk/aws-appsync";
 
 export const getDynamoProps = codeGen => {
 	const stackMapping = toPairs(codeGen.stackMapping);
 	const tables = stackMapping.filter(([key]) => key.endsWith("Table"));
-	return tables.map(([key, stackName]) => {
-		const result = {
+	return tables.map(([key, stackName]) => ({
 			...dynamo.createDynamoTableProps(key, stackName, codeGen),
 			...dynamo.createDynamoResolverProps(key, stackName, codeGen),
-		};
-		return result;
-	});
+		})
+	);
 };
 
 export const getCodeGenSchema = (options, schema) => {
@@ -40,13 +40,17 @@ export const getCodeGenSchema = (options, schema) => {
 
 export const readSchema = path => readFileSync(path, "utf8");
 
-export class AppsyncGQLStack {
-	constructor(scope, props) {
+export class AppsyncGQLStack extends Stack {
+	constructor(scope, name, props) {
 		// read schema
-		const schema = readSchema(options.schema);
+		const schema = readSchema(props.schema);
 		const codegen = getCodeGenSchema(props, schema);
 		const dynamoProps = getDynamoProps(codegen);
-		const api = new AppsyncApi();
+		const apiName = `${name}-graphql-api`;
+		const api = new GraphQLApi(this, apiName, {
+			name : apiName,
+			schemaDefinition : schema
+		});
 		const dynamoStack = dynamo.createDynamoTableDataSource(
 			this,
 			props,

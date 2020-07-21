@@ -1,5 +1,17 @@
-import { join } from "path";
-import { mkdirSync, writeFileSync } from "fs";
-import { AppsyncGQLStack, getDynamoProps, readSchema } from "../../src";
+require("@babel/register");
+const cdk = require('@aws-cdk/core');
+const { join } = require("path");
+const { mkdirSync, writeFileSync } = require("fs");
+const { AppsyncGQLStack, getDynamoProps, getCodeGenSchema, readSchema } = require("../../src");
 
-const dynamoProps = getDynamoProps(readSchema(join(__dirname, "schema.gql")));
+const schema = join(__dirname, "schema.gql");
+const schemaText = readSchema(schema)
+const codegen = getCodeGenSchema({}, schemaText);
+const dynamoProps = getDynamoProps(codegen);
+
+writeFileSync(join(__dirname,'props.json'), JSON.stringify(dynamoProps, null, 2));
+
+const app = new cdk.App();
+new AppsyncGQLStack(app, 'test', {
+    schema
+});
