@@ -7,7 +7,11 @@
     "tableProps": [
       "blog-table",
       {
-        "tableName": "blog-table"
+        "tableName": "blog-table",
+        "partitionKey": {
+          "name": "blogId",
+          "type": "S"
+        }
       }
     ],
     "resolverProps": [
@@ -111,7 +115,15 @@
     "tableProps": [
       "blog-post-table",
       {
-        "tableName": "blog-post-table"
+        "tableName": "blog-post-table",
+        "partitionKey": {
+          "name": "blogId",
+          "type": "S"
+        },
+        "sortKey": {
+          "name": "blogPostId",
+          "type": "S"
+        }
       }
     ],
     "resolverProps": [
@@ -215,12 +227,25 @@
     "tableProps": [
       "comment-table",
       {
-        "tableName": "comment-table"
+        "tableName": "comment-table",
+        "partitionKey": {
+          "name": "blogPostId",
+          "type": "S"
+        },
+        "sortKey": {
+          "name": "commentId",
+          "type": "S"
+        }
       }
     ],
     "GSI": [
       {
-        "indexName": "byPublishDate"
+        "indexName": "byPublishDate",
+        "projectionType": "ALL",
+        "partitionKey": {
+          "name": "publishDate",
+          "type": "N"
+        }
       }
     ],
     "resolverProps": [

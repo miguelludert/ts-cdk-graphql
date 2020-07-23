@@ -16,8 +16,8 @@
 				"sortKey": {}
 			}
 		],
-		"GSI": {},
-		"LSI": {},
+		"GSI": [{ "GSI": "GSI" }],
+		"LSI": [{ "LSI": "LSI" }],
 		"resolverProps": [
 			{
 				"typeName": "Query",

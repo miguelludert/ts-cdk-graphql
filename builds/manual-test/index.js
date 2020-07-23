@@ -1,17 +1,25 @@
 require("@babel/register");
-const cdk = require('@aws-cdk/core');
+const cdk = require("@aws-cdk/core");
 const { join } = require("path");
 const { mkdirSync, writeFileSync } = require("fs");
-const { AppsyncGQLStack, getDynamoProps, getCodeGenSchema, readSchema } = require("../../src");
+const {
+	AppsyncGQLSchemaStack,
+	getDynamoProps,
+	getCodeGenSchema,
+	readSchema,
+} = require("../../src");
 
 const schema = join(__dirname, "schema.gql");
-const schemaText = readSchema(schema)
+const schemaText = readSchema(schema);
 const codegen = getCodeGenSchema({}, schemaText);
 const dynamoProps = getDynamoProps(codegen);
 
-writeFileSync(join(__dirname,'props.json'), JSON.stringify(dynamoProps, null, 2));
+writeFileSync(
+	join(__dirname, "props.json"),
+	JSON.stringify(dynamoProps, null, 2),
+);
 
 const app = new cdk.App();
-new AppsyncGQLStack(app, 'test', {
-    schema
+new AppsyncGQLSchemaStack(app, "test", {
+	schema,
 });

@@ -4,10 +4,14 @@ import { join } from "path";
 import { MappingTemplate } from "@aws-cdk/aws-appsync";
 
 jest.mock("@aws-cdk/aws-dynamodb", () => {
+	const dynamoModule = jest.requireActual("@aws-cdk/aws-dynamodb");
 	return {
+		...dynamoModule,
 		Table: function(...args) {
 			this.mock = jest.fn();
 			this.mock(...args);
+			this.addGlobalSecondaryIndex = jest.fn();
+			this.addLocalSecondaryIndex = jest.fn();
 		},
 	};
 });
@@ -50,7 +54,13 @@ describe("Code Generation", () => {
 			const { scope, options, dynamoParams } = jest.requireActual(
 				"./fixtures/createDynamoTableDataSource.json",
 			);
-			const { dataSourceProps, tableProps, resolverProps } = dynamoParams;
+			const {
+				dataSourceProps,
+				tableProps,
+				resolverProps,
+				GSI,
+				LSI,
+			} = dynamoParams;
 			const api = {
 				addDynamoDbDataSource: jest.fn(),
 			};
@@ -68,6 +78,8 @@ describe("Code Generation", () => {
 				dynamoParams,
 			);
 			expect(actual.table.mock).toHaveBeenCalledWith(scope, ...tableProps);
+			expect(actual.table.addLocalSecondaryIndex).toHaveBeenCalledWith(LSI[0]);
+			expect(actual.table.addGlobalSecondaryIndex).toHaveBeenCalledWith(GSI[0]);
 			expect(actual.resolvers).toEqual(["111", "222"]);
 			expect(actual.dataSource).toEqual(dataSource);
 			expect(api.addDynamoDbDataSource).toHaveBeenCalledWith(
@@ -77,6 +89,39 @@ describe("Code Generation", () => {
 			);
 			expect(dataSource.createResolver).toHaveBeenCalledWith(resolverProps[0]);
 			expect(dataSource.createResolver).toHaveBeenCalledWith(resolverProps[1]);
+		});
+	});
+	describe("getDynamoAttributeProps", () => {
+		it("should attribute props from name and properties", () => {
+			const { AttributeType } = jest.requireActual("@aws-cdk/aws-dynamodb");
+			const keySchema = [
+				{ AttributeName: "StringKey" },
+				{ AttributeName: "NumberKey" },
+				{ AttributeName: "BinaryKey" },
+			];
+			const attributeDefinitions = [
+				{
+					AttributeName: "StringKey",
+					AttributeType: "S",
+				},
+				{
+					AttributeName: "NumberKey",
+					AttributeType: "N",
+				},
+				{
+					AttributeName: "BinaryKey",
+					AttributeType: "B",
+				},
+			];
+			const expected = {
+				partitionKey: { name: "StringKey", type: AttributeType.STRING },
+				sortKey: { name: "NumberKey", type: AttributeType.NUMBER },
+			};
+			const actual = underTest.getDynamoAttributeProps(
+				keySchema,
+				attributeDefinitions,
+			);
+			expect(actual).toEqual(expected);
 		});
 	});
 });

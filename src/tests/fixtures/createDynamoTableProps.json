@@ -3,7 +3,11 @@
 		"tableProps": [
 			"blog-post-table",
 			{
-				"tableName": "blog-post-table"
+				"tableName": "blog-post-table",
+				"partitionKey": {
+					"name": "blogPostId",
+					"type": "S"
+				}
 			}
 		],
 		"dataSourceProps": [
@@ -12,24 +16,46 @@
 		],
 		"GSI": [
 			{
-				"indexName": "byTitle"
+				"indexName": "byTitle",
+				"projectionType": "ALL",
+				"partitionKey": {
+					"name": "title",
+					"type": "S"
+				}
 			}
 		]
 	},
 	"expectedComment": {
-		"tableProps": [
-			"comment-table",
-			{
-				"tableName": "comment-table"
-			}
-		],
 		"dataSourceProps": [
 			"comment-table-ds",
 			"A dynamo table datasource for Comment"
 		],
+		"tableProps": [
+			"comment-table",
+			{
+				"tableName": "comment-table",
+				"partitionKey": {
+					"name": "blogPostId",
+					"type": "S"
+				},
+				"sortKey": {
+					"name": "commentId",
+					"type": "S"
+				}
+			}
+		],
 		"LSI": [
 			{
-				"indexName": "byIds"
+				"indexName": "byIds",
+				"projectionType": "ALL",
+				"partitionKey": {
+					"name": "blogPostId",
+					"type": "S"
+				},
+				"sortKey": {
+					"name": "commentId",
+					"type": "S"
+				}
 			}
 		]
 	},
@@ -43,6 +69,22 @@
 				"Resources": {
 					"BlogPostTable": {
 						"Properties": {
+							"AttributeDefinitions": [
+								{
+									"AttributeName": "blogPostId",
+									"AttributeType": "S"
+								},
+								{
+									"AttributeName": "title",
+									"AttributeType": "S"
+								}
+							],
+							"KeySchema": [
+								{
+									"AttributeName": "blogPostId",
+									"AttributeType": "S"
+								}
+							],
 							"GlobalSecondaryIndexes": [
 								{
 									"IndexName": "byTitle",
@@ -81,16 +123,36 @@
 				"Resources": {
 					"CommentTable": {
 						"Properties": {
+							"AttributeDefinitions": [
+								{
+									"AttributeName": "blogPostId",
+									"AttributeType": "S"
+								},
+								{
+									"AttributeName": "commentId",
+									"AttributeType": "S"
+								}
+							],
+							"KeySchema": [
+								{
+									"AttributeName": "blogPostId",
+									"AttributeType": "S"
+								},
+								{
+									"AttributeName": "commentId",
+									"AttributeType": "S"
+								}
+							],
 							"LocalSecondaryIndexes": [
 								{
 									"IndexName": "byIds",
 									"KeySchema": [
 										{
-											"AttributeName": "id",
+											"AttributeName": "blogPostId",
 											"KeyType": "HASH"
 										},
 										{
-											"AttributeName": "id2",
+											"AttributeName": "commentId",
 											"KeyType": "RANGE"
 										}
 									],

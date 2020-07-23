@@ -1,15 +1,66 @@
 import { readFileSync, writeFileSync } from "fs";
-import { curry, map, endsWith, reduce, toPairs, values, pipe } from "ramda";
+import {
+	defaultTo,
+	curry,
+	map,
+	endsWith,
+	reduce,
+	toPairs,
+	values,
+	pipe,
+} from "ramda";
 import { paramCase, camelCase } from "change-case";
-import { Table } from "@aws-cdk/aws-dynamodb";
+import { Table, AttributeType } from "@aws-cdk/aws-dynamodb";
 
 export const writeFile = (path, content) => {
 	writeFileSync(path, content, "utf8");
 	return content;
 };
 
+export const getDynamoAttributeProps = (keySchema, attributeDefinitions) => {
+	const result = {};
+	const getAttributeTypes = name => {
+		const attr = attributeDefinitions.find(x => x.AttributeName == name);
+		return {
+			S: AttributeType.STRING,
+			N: AttributeType.NUMBER,
+			B: AttributeType.BINARY,
+		}[attr.AttributeType];
+	};
+	if (keySchema[0]) {
+		result.partitionKey = {
+			name: keySchema[0].AttributeName,
+			type: getAttributeTypes(keySchema[0].AttributeName),
+		};
+	}
+	if (keySchema[1]) {
+		result.sortKey = {
+			name: keySchema[1].AttributeName,
+			type: getAttributeTypes(keySchema[1].AttributeName),
+		};
+	}
+	return result;
+};
+
 export const createDynamoTableProps = (key, stackName, codeGen) => {
+	const {
+		AttributeDefinitions,
+		KeySchema,
+		LocalSecondaryIndexes,
+		GlobalSecondaryIndexes,
+	} = codeGen.stacks[stackName].Resources[key].Properties;
 	const tableName = paramCase(key);
+	const getIndex = defaultTo({}, (indexes, name) => {
+		if (indexes) {
+			return {
+				[name]: indexes.map(({ IndexName, KeySchema, Projection }) => ({
+					indexName: IndexName,
+					projectionType: Projection && Projection.ProjectionType,
+					...getDynamoAttributeProps(KeySchema, AttributeDefinitions),
+				})),
+			};
+		}
+	});
 	const result = {
 		dataSourceProps: [
 			`${tableName}-ds`,
@@ -19,44 +70,16 @@ export const createDynamoTableProps = (key, stackName, codeGen) => {
 			tableName,
 			{
 				tableName,
+				...getDynamoAttributeProps(KeySchema, AttributeDefinitions),
 			},
 		],
+		...getIndex(GlobalSecondaryIndexes, "GSI"),
+		...getIndex(LocalSecondaryIndexes, "LSI"),
 	};
-	const {
-		KeySchema,
-		LocalSecondaryIndexes,
-		GlobalSecondaryIndexes,
-	} = codeGen.stacks[stackName].Resources[key].Properties;
-
-	const createIndexes = map(
-		({ IndexName: indexName, KeySchema: keySchema }) => ({
-			indexName,
-			...reduce(
-				(arg, index) => {
-					const keySchemaMap = ["partitionKey", "sortKey"];
-					if (keySchemaMap[index]) {
-						const { AttributeName, KeyType } = arg;
-						schemaDefinition[keySchemaMap[index]] = {
-							name: AttributeName,
-							type: KeyType,
-						};
-					}
-				},
-				{},
-				keySchema || [],
-			),
-		}),
-	);
-	if (GlobalSecondaryIndexes) {
-		result.GSI = createIndexes(GlobalSecondaryIndexes);
-	}
-	if (LocalSecondaryIndexes) {
-		result.LSI = createIndexes(LocalSecondaryIndexes);
-	}
 	return result;
 };
 
-export const createDynamoResolverProps = (key, stackName, codegen) => {
+export const createDynamoResolverProps = curry((key, stackName, codegen) => {
 	const reducer = (acc, [key, template]) => {
 		const [typeName, fieldName, type] = key.split(".");
 		const accKey = `${typeName}.${fieldName}`;
@@ -83,7 +106,7 @@ export const createDynamoResolverProps = (key, stackName, codegen) => {
 	return {
 		resolverProps,
 	};
-};
+});
 
 export const createDynamoTableDataSource = curry(
 	(scope, options, api, dynamoParams) => {
@@ -95,6 +118,12 @@ export const createDynamoTableDataSource = curry(
 			dataSourceProps[1],
 			table,
 		);
+		if (dynamoParams.GSI) {
+			dynamoParams.GSI.map(index => table.addGlobalSecondaryIndex(index));
+		}
+		if (dynamoParams.LSI) {
+			dynamoParams.LSI.map(index => table.addLocalSecondaryIndex(index));
+		}
 		const resolvers = resolverProps.map(resolverProp =>
 			dataSource.createResolver(resolverProp),
 		);

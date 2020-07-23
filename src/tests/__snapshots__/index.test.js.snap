@@ -6,7 +6,6 @@ Object {
   "pipelineFunctions": Object {},
   "resolvers": Object {
     "Mutation.createBlogPost.req.vtl": "## [Start] Set default values. **
-$util.qr($context.args.input.put(\\"id\\", $util.defaultIfNull($ctx.args.input.id, $util.autoId())))
 #set( $createdAt = $util.time.nowISO8601() )
 ## Automatically set the createdAt timestamp. **
 $util.qr($context.args.input.put(\\"createdAt\\", $util.defaultIfNull($ctx.args.input.createdAt, $createdAt)))
@@ -17,7 +16,7 @@ $util.qr($context.args.input.put(\\"updatedAt\\", $util.defaultIfNull($ctx.args.
 
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId)
 } )
 ## [End] Set the primary @key. **
 
@@ -54,7 +53,6 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"BlogPost\\"))
 ## [End] Prepare DynamoDB PutItem Request. **",
     "Mutation.createBlogPost.res.vtl": "$util.toJson($ctx.result)",
     "Mutation.createComment.req.vtl": "## [Start] Set default values. **
-$util.qr($context.args.input.put(\\"id\\", $util.defaultIfNull($ctx.args.input.id, $util.autoId())))
 #set( $createdAt = $util.time.nowISO8601() )
 ## Automatically set the createdAt timestamp. **
 $util.qr($context.args.input.put(\\"createdAt\\", $util.defaultIfNull($ctx.args.input.createdAt, $createdAt)))
@@ -65,8 +63,8 @@ $util.qr($context.args.input.put(\\"updatedAt\\", $util.defaultIfNull($ctx.args.
 
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id),
-  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.input.id2)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId),
+  \\"commentId\\": $util.dynamodb.toDynamoDB($ctx.args.input.commentId)
 } )
 ## [End] Set the primary @key. **
 
@@ -105,7 +103,7 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
     "Mutation.deleteBlogPost.req.vtl": "
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId)
 } )
 ## [End] Set the primary @key. **
 #if( $authCondition )
@@ -176,8 +174,8 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
     "Mutation.deleteComment.req.vtl": "
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id),
-  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.input.id2)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId),
+  \\"commentId\\": $util.dynamodb.toDynamoDB($ctx.args.input.commentId)
 } )
 ## [End] Set the primary @key. **
 #if( $authCondition )
@@ -249,7 +247,7 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
 
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId)
 } )
 ## [End] Set the primary @key. **
 
@@ -390,8 +388,8 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
 
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.input.id),
-  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.input.id2)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId),
+  \\"commentId\\": $util.dynamodb.toDynamoDB($ctx.args.input.commentId)
 } )
 ## [End] Set the primary @key. **
 
@@ -530,7 +528,7 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
     "Mutation.updateComment.res.vtl": "$util.toJson($ctx.result)",
     "Query.getBlogPost.req.vtl": "## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.id)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.blogPostId)
 } )
 ## [End] Set the primary @key. **
 {
@@ -543,8 +541,8 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
     "Query.getBlogPost.res.vtl": "$util.toJson($ctx.result)",
     "Query.getComment.req.vtl": "## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
-  \\"id\\": $util.dynamodb.toDynamoDB($ctx.args.id),
-  \\"id2\\": $util.dynamodb.toDynamoDB($ctx.args.id2)
+  \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.blogPostId),
+  \\"commentId\\": $util.dynamodb.toDynamoDB($ctx.args.commentId)
 } )
 ## [End] Set the primary @key. **
 {
@@ -560,14 +558,14 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
   $util.error(\\"sortDirection is not supported for List operations without a Sort key defined.\\", \\"InvalidArgumentsError\\")
 #end
 #set( $modelQueryExpression = {} )
-#if( !$util.isNull($ctx.args.id) )
-  #set( $modelQueryExpression.expression = \\"#id = :id\\" )
+#if( !$util.isNull($ctx.args.blogPostId) )
+  #set( $modelQueryExpression.expression = \\"#blogPostId = :blogPostId\\" )
   #set( $modelQueryExpression.expressionNames = {
-  \\"#id\\": \\"id\\"
+  \\"#blogPostId\\": \\"blogPostId\\"
 } )
   #set( $modelQueryExpression.expressionValues = {
-  \\":id\\": {
-      \\"S\\": \\"$ctx.args.id\\"
+  \\":blogPostId\\": {
+      \\"S\\": \\"$ctx.args.blogPostId\\"
   }
 } )
 #end
@@ -598,62 +596,62 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
 $util.toJson($ListRequest)",
     "Query.listBlogPosts.res.vtl": "$util.toJson($ctx.result)",
     "Query.listComments.req.vtl": "## [Start] Set query expression for @key **
-#if( $util.isNull($ctx.args.id) && !$util.isNull($ctx.args.sortDirection) )
-  $util.error(\\"When providing argument 'sortDirection' you must also provide argument 'id'.\\", \\"InvalidArgumentsError\\")
+#if( $util.isNull($ctx.args.blogPostId) && !$util.isNull($ctx.args.sortDirection) )
+  $util.error(\\"When providing argument 'sortDirection' you must also provide argument 'blogPostId'.\\", \\"InvalidArgumentsError\\")
 #end
 #set( $modelQueryExpression = {} )
 ## [Start] Validate key arguments. **
-#if( !$util.isNull($ctx.args.id2) && $util.isNull($ctx.args.id) )
-  $util.error(\\"When providing argument 'id2' you must also provide arguments id\\", \\"InvalidArgumentsError\\")
+#if( !$util.isNull($ctx.args.commentId) && $util.isNull($ctx.args.blogPostId) )
+  $util.error(\\"When providing argument 'commentId' you must also provide arguments blogPostId\\", \\"InvalidArgumentsError\\")
 #end
 ## [End] Validate key arguments. **
-#if( !$util.isNull($ctx.args.id) )
-  #set( $modelQueryExpression.expression = \\"#id = :id\\" )
+#if( !$util.isNull($ctx.args.blogPostId) )
+  #set( $modelQueryExpression.expression = \\"#blogPostId = :blogPostId\\" )
   #set( $modelQueryExpression.expressionNames = {
-  \\"#id\\": \\"id\\"
+  \\"#blogPostId\\": \\"blogPostId\\"
 } )
   #set( $modelQueryExpression.expressionValues = {
-  \\":id\\": {
-      \\"S\\": \\"$ctx.args.id\\"
+  \\":blogPostId\\": {
+      \\"S\\": \\"$ctx.args.blogPostId\\"
   }
 } )
 #end
 ## [Start] Applying Key Condition **
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.beginsWith) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.beginsWith) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND begins_with(#sortKey, :sortKey)\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.beginsWith\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.commentId.beginsWith\\" }))
 #end
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.between) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.between) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey BETWEEN :sortKey0 AND :sortKey1\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey0\\", { \\"S\\": \\"$ctx.args.id2.between[0]\\" }))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey1\\", { \\"S\\": \\"$ctx.args.id2.between[1]\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey0\\", { \\"S\\": \\"$ctx.args.commentId.between[0]\\" }))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey1\\", { \\"S\\": \\"$ctx.args.commentId.between[1]\\" }))
 #end
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.eq) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.eq) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey = :sortKey\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.eq\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.commentId.eq\\" }))
 #end
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.lt) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.lt) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey < :sortKey\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.lt\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.commentId.lt\\" }))
 #end
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.le) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.le) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey <= :sortKey\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.le\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.commentId.le\\" }))
 #end
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.gt) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.gt) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey > :sortKey\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.gt\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.commentId.gt\\" }))
 #end
-#if( !$util.isNull($ctx.args.id2) && !$util.isNull($ctx.args.id2.ge) )
+#if( !$util.isNull($ctx.args.commentId) && !$util.isNull($ctx.args.commentId.ge) )
   #set( $modelQueryExpression.expression = \\"$modelQueryExpression.expression AND #sortKey >= :sortKey\\" )
-  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"id2\\"))
-  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.id2.ge\\" }))
+  $util.qr($modelQueryExpression.expressionNames.put(\\"#sortKey\\", \\"commentId\\"))
+  $util.qr($modelQueryExpression.expressionValues.put(\\":sortKey\\", { \\"S\\": \\"$ctx.args.commentId.ge\\" }))
 #end
 ## [End] Applying Key Condition **
 ## [End] Set query expression for @key **
@@ -684,15 +682,16 @@ $util.toJson($ListRequest)",
     "Query.listComments.res.vtl": "$util.toJson($ctx.result)",
   },
   "schema": "type BlogPost {
-  id: String!
+  blogPostId: String!
   title: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 type Comment {
-  id: String!
-  id2: String!
+  blogPostId: String!
+  commentId: String!
+  keywords: [String]!
   body: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -760,7 +759,7 @@ input ModelBooleanFilterInput {
 }
 
 input ModelBlogPostFilterInput {
-  id: ModelStringFilterInput
+  blogPostId: ModelStringFilterInput
   title: ModelStringFilterInput
   and: [ModelBlogPostFilterInput]
   or: [ModelBlogPostFilterInput]
@@ -768,24 +767,24 @@ input ModelBlogPostFilterInput {
 }
 
 type Query {
-  getBlogPost(id: String!): BlogPost
-  listBlogPosts(id: String, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection
-  getComment(id: String!, id2: String!): Comment
-  listComments(id: String, id2: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection
+  getBlogPost(blogPostId: String!): BlogPost
+  listBlogPosts(blogPostId: String, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection
+  getComment(blogPostId: String!, commentId: String!): Comment
+  listComments(blogPostId: String, commentId: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection
 }
 
 input CreateBlogPostInput {
-  id: String!
+  blogPostId: String!
   title: String
 }
 
 input UpdateBlogPostInput {
-  id: String!
+  blogPostId: String!
   title: String
 }
 
 input DeleteBlogPostInput {
-  id: String!
+  blogPostId: String!
 }
 
 type Mutation {
@@ -812,8 +811,9 @@ type ModelCommentConnection {
 }
 
 input ModelCommentFilterInput {
-  id: ModelStringFilterInput
-  id2: ModelStringFilterInput
+  blogPostId: ModelStringFilterInput
+  commentId: ModelStringFilterInput
+  keywords: ModelStringFilterInput
   body: ModelStringFilterInput
   and: [ModelCommentFilterInput]
   or: [ModelCommentFilterInput]
@@ -821,20 +821,22 @@ input ModelCommentFilterInput {
 }
 
 input CreateCommentInput {
-  id: String!
-  id2: String!
+  blogPostId: String!
+  commentId: String!
+  keywords: [String]!
   body: String
 }
 
 input UpdateCommentInput {
-  id: String!
-  id2: String!
+  blogPostId: String!
+  commentId: String!
+  keywords: [String]
   body: String
 }
 
 input DeleteCommentInput {
-  id: String!
-  id2: String!
+  blogPostId: String!
+  commentId: String!
 }
 
 input ModelStringKeyConditionInput {
@@ -1319,7 +1321,7 @@ input ModelStringKeyConditionInput {
           "Properties": Object {
             "AttributeDefinitions": Array [
               Object {
-                "AttributeName": "id",
+                "AttributeName": "blogPostId",
                 "AttributeType": "S",
               },
               Object {
@@ -1368,7 +1370,7 @@ input ModelStringKeyConditionInput {
             ],
             "KeySchema": Array [
               Object {
-                "AttributeName": "id",
+                "AttributeName": "blogPostId",
                 "KeyType": "HASH",
               },
             ],
@@ -2207,11 +2209,15 @@ input ModelStringKeyConditionInput {
           "Properties": Object {
             "AttributeDefinitions": Array [
               Object {
-                "AttributeName": "id",
+                "AttributeName": "blogPostId",
                 "AttributeType": "S",
               },
               Object {
-                "AttributeName": "id2",
+                "AttributeName": "commentId",
+                "AttributeType": "S",
+              },
+              Object {
+                "AttributeName": "keywords",
                 "AttributeType": "S",
               },
             ],
@@ -2224,32 +2230,44 @@ input ModelStringKeyConditionInput {
                 },
               ],
             },
-            "KeySchema": Array [
+            "GlobalSecondaryIndexes": Array [
               Object {
-                "AttributeName": "id",
-                "KeyType": "HASH",
-              },
-              Object {
-                "AttributeName": "id2",
-                "KeyType": "RANGE",
-              },
-            ],
-            "LocalSecondaryIndexes": Array [
-              Object {
-                "IndexName": "byIds",
+                "IndexName": "byKeywords",
                 "KeySchema": Array [
                   Object {
-                    "AttributeName": "id",
+                    "AttributeName": "keywords",
                     "KeyType": "HASH",
-                  },
-                  Object {
-                    "AttributeName": "id2",
-                    "KeyType": "RANGE",
                   },
                 ],
                 "Projection": Object {
                   "ProjectionType": "ALL",
                 },
+                "ProvisionedThroughput": Object {
+                  "Fn::If": Array [
+                    "ShouldUsePayPerRequestBilling",
+                    Object {
+                      "Ref": "AWS::NoValue",
+                    },
+                    Object {
+                      "ReadCapacityUnits": Object {
+                        "Ref": "DynamoDBModelTableReadIOPS",
+                      },
+                      "WriteCapacityUnits": Object {
+                        "Ref": "DynamoDBModelTableWriteIOPS",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+            "KeySchema": Array [
+              Object {
+                "AttributeName": "blogPostId",
+                "KeyType": "HASH",
+              },
+              Object {
+                "AttributeName": "commentId",
+                "KeyType": "RANGE",
               },
             ],
             "PointInTimeRecoverySpecification": Object {

@@ -16,10 +16,9 @@ export const getDynamoProps = codeGen => {
 	const stackMapping = toPairs(codeGen.stackMapping);
 	const tables = stackMapping.filter(([key]) => key.endsWith("Table"));
 	return tables.map(([key, stackName]) => ({
-			...dynamo.createDynamoTableProps(key, stackName, codeGen),
-			...dynamo.createDynamoResolverProps(key, stackName, codeGen),
-		})
-	);
+		...dynamo.createDynamoTableProps(key, stackName, codeGen),
+		...dynamo.createDynamoResolverProps(key, stackName, codeGen),
+	}));
 };
 
 export const getCodeGenSchema = (options, schema) => {
@@ -40,21 +39,21 @@ export const getCodeGenSchema = (options, schema) => {
 
 export const readSchema = path => readFileSync(path, "utf8");
 
-export class AppsyncGQLStack extends Stack {
+export class AppsyncGQLSchemaStack extends Stack {
 	constructor(scope, name, props) {
 		// read schema
+		super(scope, name, props);
 		const schema = readSchema(props.schema);
 		const codegen = getCodeGenSchema(props, schema);
 		const dynamoProps = getDynamoProps(codegen);
 		const apiName = `${name}-graphql-api`;
 		const api = new GraphQLApi(this, apiName, {
-			name : apiName,
-			schemaDefinition : schema
+			name: apiName,
+			schemaDefinition: schema,
 		});
-		const dynamoStack = dynamo.createDynamoTableDataSource(
-			this,
-			props,
-			api,
+
+		const dynamoStack = map(
+			dynamo.createDynamoTableDataSource(this, props, api),
 			dynamoProps,
 		);
 	}
