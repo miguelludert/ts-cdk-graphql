@@ -1,35 +1,41 @@
 {
-  "name": "cdk-graphql",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest --watchAll",
-    "test:deploy": "npx babel-node builds/manual-test/index.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@aws-cdk/aws-appsync": "^1.51.0",
-    "@aws-cdk/aws-dynamodb": "^1.51.0",
-    "@aws-cdk/core": "^1.53.0",
-    "change-case": "^4.1.1",
-    "graphql-auth-transformer": "^6.18.4",
-    "graphql-connection-transformer": "^4.18.3",
-    "graphql-dynamodb-transformer": "^6.19.4",
-    "graphql-elasticsearch-transformer": "^4.7.6",
-    "graphql-key-transformer": "^2.19.3",
-    "graphql-transformer-core": "^6.19.3",
-    "graphql-versioned-transformer": "^4.15.11",
-    "ramda": "^0.27.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.10.4",
-    "@babel/node": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "@babel/register": "^7.10.5",
-    "babel-jest": "^26.1.0",
-    "babel-node": "0.0.1-security",
-    "jest": "^26.1.0"
-  }
+	"name": "cdk-graphql",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "jest --watchAll",
+		"test:cdk": "npx webpack --config ./builds/cdk/webpack.config.js"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@aws-cdk/aws-appsync": "1.53.0",
+		"@aws-cdk/aws-dynamodb": "1.53.0",
+		"@aws-cdk/core": "1.53.0",
+		"aws-sdk": "^2.719.0",
+		"babel-loader": "^8.1.0",
+		"change-case": "^4.1.1",
+		"graphql-auth-transformer": "^6.18.4",
+		"graphql-connection-transformer": "^4.18.3",
+		"graphql-dynamodb-transformer": "^6.19.4",
+		"graphql-elasticsearch-transformer": "^4.7.6",
+		"graphql-key-transformer": "^2.19.3",
+		"graphql-transformer-core": "^6.19.3",
+		"graphql-versioned-transformer": "^4.15.11",
+		"ramda": "^0.27.0"
+	},
+	"devDependencies": {
+		"@aws-cdk/assert": "1.53.0",
+		"@babel/core": "^7.10.4",
+		"@babel/node": "^7.10.5",
+		"@babel/preset-env": "^7.10.4",
+		"@babel/register": "^7.10.5",
+		"aws-cdk": "1.50.0",
+		"babel-jest": "^26.1.0",
+		"jest": "^26.1.0",
+		"webpack": "^4.43.0",
+		"webpack-cli": "^3.3.12",
+		"webpack-node-externals": "^2.5.0"
+	}
 }

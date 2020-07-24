@@ -51,8 +51,7 @@ export class AppsyncGQLSchemaStack extends Stack {
 			name: apiName,
 			schemaDefinition: schema,
 		});
-
-		const dynamoStack = map(
+		this.dynamoStacks = map(
 			dynamo.createDynamoTableDataSource(this, props, api),
 			dynamoProps,
 		);
