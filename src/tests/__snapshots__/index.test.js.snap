@@ -3,7 +3,50 @@
 exports[`Index getCodeGenSchema should generate a schema 1`] = `
 Object {
   "functions": Object {},
-  "pipelineFunctions": Object {},
+  "pipelineFunctions": Object {
+    "InvokeRecommendedPostsLambdaDataSource.req.vtl": "## [Start] Invoke AWS Lambda data source: RecommendedPostsLambdaDataSource. **
+{
+  \\"version\\": \\"2018-05-29\\",
+  \\"operation\\": \\"Invoke\\",
+  \\"payload\\": {
+      \\"typeName\\": \\"$ctx.stash.get(\\"typeName\\")\\",
+      \\"fieldName\\": \\"$ctx.stash.get(\\"fieldName\\")\\",
+      \\"arguments\\": $util.toJson($ctx.arguments),
+      \\"identity\\": $util.toJson($ctx.identity),
+      \\"source\\": $util.toJson($ctx.source),
+      \\"request\\": $util.toJson($ctx.request),
+      \\"prev\\": $util.toJson($ctx.prev)
+  }
+}
+## [End] Invoke AWS Lambda data source: RecommendedPostsLambdaDataSource. **",
+    "InvokeRecommendedPostsLambdaDataSource.res.vtl": "## [Start] Handle error or return result. **
+#if( $ctx.error )
+  $util.error($ctx.error.message, $ctx.error.type)
+#end
+$util.toJson($ctx.result)
+## [End] Handle error or return result. **",
+    "InvokeTagCloudLambdaDataSource.req.vtl": "## [Start] Invoke AWS Lambda data source: TagCloudLambdaDataSource. **
+{
+  \\"version\\": \\"2018-05-29\\",
+  \\"operation\\": \\"Invoke\\",
+  \\"payload\\": {
+      \\"typeName\\": \\"$ctx.stash.get(\\"typeName\\")\\",
+      \\"fieldName\\": \\"$ctx.stash.get(\\"fieldName\\")\\",
+      \\"arguments\\": $util.toJson($ctx.arguments),
+      \\"identity\\": $util.toJson($ctx.identity),
+      \\"source\\": $util.toJson($ctx.source),
+      \\"request\\": $util.toJson($ctx.request),
+      \\"prev\\": $util.toJson($ctx.prev)
+  }
+}
+## [End] Invoke AWS Lambda data source: TagCloudLambdaDataSource. **",
+    "InvokeTagCloudLambdaDataSource.res.vtl": "## [Start] Handle error or return result. **
+#if( $ctx.error )
+  $util.error($ctx.error.message, $ctx.error.type)
+#end
+$util.toJson($ctx.result)
+## [End] Handle error or return result. **",
+  },
   "resolvers": Object {
     "Mutation.createBlogPost.req.vtl": "## [Start] Set default values. **
 #set( $createdAt = $util.time.nowISO8601() )
@@ -42,7 +85,7 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"BlogPost\\"))
 } )
 #end
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"PutItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\":   $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
@@ -51,7 +94,11 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"BlogPost\\"))
   \\"condition\\": $util.toJson($condition)
 }
 ## [End] Prepare DynamoDB PutItem Request. **",
-    "Mutation.createBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.createBlogPost.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Mutation.createComment.req.vtl": "## [Start] Set default values. **
 #set( $createdAt = $util.time.nowISO8601() )
 ## Automatically set the createdAt timestamp. **
@@ -90,7 +137,7 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
 } )
 #end
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"PutItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\":   $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
@@ -99,7 +146,11 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
   \\"condition\\": $util.toJson($condition)
 }
 ## [End] Prepare DynamoDB PutItem Request. **",
-    "Mutation.createComment.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.createComment.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Mutation.deleteBlogPost.req.vtl": "
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
@@ -163,14 +214,18 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
 } )
 #end
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"DeleteItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
 } #end,
   \\"condition\\": $util.toJson($condition)
 }",
-    "Mutation.deleteBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.deleteBlogPost.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Mutation.deleteComment.req.vtl": "
 ## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
@@ -235,14 +290,18 @@ $util.qr($context.args.input.put(\\"__typename\\", \\"Comment\\"))
 } )
 #end
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"DeleteItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
 } #end,
   \\"condition\\": $util.toJson($condition)
 }",
-    "Mutation.deleteComment.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.deleteComment.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Mutation.updateBlogPost.req.vtl": "
 
 ## [Start] Set the primary @key. **
@@ -373,7 +432,7 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
   $util.qr($update.put(\\"expressionValues\\", $expValues))
 #end
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"UpdateItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\": {
@@ -383,7 +442,11 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
   \\"update\\": $util.toJson($update),
   \\"condition\\": $util.toJson($condition)
 }",
-    "Mutation.updateBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.updateBlogPost.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Mutation.updateComment.req.vtl": "
 
 ## [Start] Set the primary @key. **
@@ -515,7 +578,7 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
   $util.qr($update.put(\\"expressionValues\\", $expValues))
 #end
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"UpdateItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\": {
@@ -525,20 +588,28 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
   \\"update\\": $util.toJson($update),
   \\"condition\\": $util.toJson($condition)
 }",
-    "Mutation.updateComment.res.vtl": "$util.toJson($ctx.result)",
+    "Mutation.updateComment.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Query.getBlogPost.req.vtl": "## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
   \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.blogPostId)
 } )
 ## [End] Set the primary @key. **
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"GetItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
 } #end
 }",
-    "Query.getBlogPost.res.vtl": "$util.toJson($ctx.result)",
+    "Query.getBlogPost.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Query.getComment.req.vtl": "## [Start] Set the primary @key. **
 #set( $modelObjectKey = {
   \\"blogPostId\\": $util.dynamodb.toDynamoDB($ctx.args.blogPostId),
@@ -546,13 +617,17 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
 } )
 ## [End] Set the primary @key. **
 {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"operation\\": \\"GetItem\\",
   \\"key\\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
   \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
 } #end
 }",
-    "Query.getComment.res.vtl": "$util.toJson($ctx.result)",
+    "Query.getComment.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Query.listBlogPosts.req.vtl": "## [Start] Set query expression for @key **
 #if( !$util.isNull($ctx.args.sortDirection) )
   $util.error(\\"sortDirection is not supported for List operations without a Sort key defined.\\", \\"InvalidArgumentsError\\")
@@ -572,7 +647,7 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
 ## [End] Set query expression for @key **
 #set( $limit = $util.defaultIfNull($context.args.limit, 100) )
 #set( $ListRequest = {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"limit\\": $limit
 } )
 #if( $context.args.nextToken )
@@ -594,7 +669,11 @@ $util.qr($update.put(\\"expression\\", \\"$expression\\"))
   $util.qr($ListRequest.put(\\"operation\\", \\"Scan\\"))
 #end
 $util.toJson($ListRequest)",
-    "Query.listBlogPosts.res.vtl": "$util.toJson($ctx.result)",
+    "Query.listBlogPosts.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
     "Query.listComments.req.vtl": "## [Start] Set query expression for @key **
 #if( $util.isNull($ctx.args.blogPostId) && !$util.isNull($ctx.args.sortDirection) )
   $util.error(\\"When providing argument 'sortDirection' you must also provide argument 'blogPostId'.\\", \\"InvalidArgumentsError\\")
@@ -657,7 +736,7 @@ $util.toJson($ListRequest)",
 ## [End] Set query expression for @key **
 #set( $limit = $util.defaultIfNull($context.args.limit, 100) )
 #set( $ListRequest = {
-  \\"version\\": \\"2017-02-28\\",
+  \\"version\\": \\"2018-05-29\\",
   \\"limit\\": $limit
 } )
 #if( $context.args.nextToken )
@@ -679,7 +758,23 @@ $util.toJson($ListRequest)",
   $util.qr($ListRequest.put(\\"operation\\", \\"Scan\\"))
 #end
 $util.toJson($ListRequest)",
-    "Query.listComments.res.vtl": "$util.toJson($ctx.result)",
+    "Query.listComments.res.vtl": "#if( $ctx.error )
+$util.error($ctx.error.message, $ctx.error.type)
+#else
+$util.toJson($ctx.result)
+#end",
+    "Query.recommendedPosts.req.vtl": "## [Start] Stash resolver specific context.. **
+$util.qr($ctx.stash.put(\\"typeName\\", \\"Query\\"))
+$util.qr($ctx.stash.put(\\"fieldName\\", \\"recommendedPosts\\"))
+{}
+## [End] Stash resolver specific context.. **",
+    "Query.recommendedPosts.res.vtl": "$util.toJson($ctx.prev.result)",
+    "Query.tagCloud.req.vtl": "## [Start] Stash resolver specific context.. **
+$util.qr($ctx.stash.put(\\"typeName\\", \\"Query\\"))
+$util.qr($ctx.stash.put(\\"fieldName\\", \\"tagCloud\\"))
+{}
+## [End] Stash resolver specific context.. **",
+    "Query.tagCloud.res.vtl": "$util.toJson($ctx.prev.result)",
   },
   "schema": "type BlogPost {
   blogPostId: String!
@@ -695,6 +790,20 @@ type Comment {
   body: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+}
+
+type TagCloud {
+  size: Int!
+  tag: String!
+}
+
+type Query {
+  tagCloud(blogId: String!): [TagCloud]
+  recommendedPosts(blogPostId: String!): [BlogPost]
+  getBlogPost(blogPostId: String!): BlogPost
+  listBlogPosts(blogPostId: String, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection
+  getComment(blogPostId: String!, commentId: String!): Comment
+  listComments(blogPostId: String, commentId: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection
 }
 
 enum ModelSortDirection {
@@ -764,13 +873,6 @@ input ModelBlogPostFilterInput {
   and: [ModelBlogPostFilterInput]
   or: [ModelBlogPostFilterInput]
   not: ModelBlogPostFilterInput
-}
-
-type Query {
-  getBlogPost(blogPostId: String!): BlogPost
-  listBlogPosts(blogPostId: String, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection
-  getComment(blogPostId: String!, commentId: String!): Comment
-  listComments(blogPostId: String, commentId: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection
 }
 
 input CreateBlogPostInput {
@@ -874,8 +976,16 @@ input ModelStringKeyConditionInput {
     "GraphQLAPIKey": "root",
     "GraphQLAPIKeyOutput": "root",
     "GraphQLSchema": "root",
+    "InvokeRecommendedPostsLambdaDataSource": "FunctionDirectiveStack",
+    "InvokeTagCloudLambdaDataSource": "FunctionDirectiveStack",
     "ListBlogPostResolver": "BlogPost",
     "ListCommentResolver": "Comment",
+    "QueryrecommendedPostsResolver": "FunctionDirectiveStack",
+    "QuerytagCloudResolver": "FunctionDirectiveStack",
+    "RecommendedPostsLambdaDataSource": "FunctionDirectiveStack",
+    "RecommendedPostsLambdaDataSourceRole": "FunctionDirectiveStack",
+    "TagCloudLambdaDataSource": "FunctionDirectiveStack",
+    "TagCloudLambdaDataSourceRole": "FunctionDirectiveStack",
     "UpdateBlogPostResolver": "BlogPost",
     "UpdateCommentResolver": "Comment",
   },
@@ -2661,6 +2771,676 @@ input ModelStringKeyConditionInput {
             "TypeName": "Mutation",
           },
           "Type": "AWS::AppSync::Resolver",
+        },
+      },
+    },
+    "FunctionDirectiveStack": Object {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Conditions": Object {
+        "APIKeyExpirationEpochIsPositive": Object {
+          "Fn::And": Array [
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "APIKeyExpirationEpoch",
+                    },
+                    -1,
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "APIKeyExpirationEpoch",
+                    },
+                    0,
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        "HasEnvironmentParameter": Object {
+          "Fn::Not": Array [
+            Object {
+              "Fn::Equals": Array [
+                Object {
+                  "Ref": "env",
+                },
+                "NONE",
+              ],
+            },
+          ],
+        },
+        "ShouldCreateAPIKey": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "CreateAPIKey",
+            },
+            1,
+          ],
+        },
+        "ShouldUsePayPerRequestBilling": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBBillingMode",
+            },
+            "PAY_PER_REQUEST",
+          ],
+        },
+        "ShouldUsePointInTimeRecovery": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBEnablePointInTimeRecovery",
+            },
+            "true",
+          ],
+        },
+        "ShouldUseServerSideEncryption": Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "DynamoDBEnableServerSideEncryption",
+            },
+            "true",
+          ],
+        },
+      },
+      "Description": "An auto-generated nested stack.",
+      "Mappings": Object {},
+      "Metadata": Object {},
+      "Outputs": Object {},
+      "Parameters": Object {
+        "APIKeyExpirationEpoch": Object {
+          "Default": 0,
+          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
+          "MinValue": -1,
+          "Type": "Number",
+        },
+        "AppSyncApiId": StringParameter {
+          "Description": "The id of the AppSync API associated with this project.",
+          "Type": "String",
+        },
+        "AppSyncApiName": Object {
+          "Default": "AppSyncSimpleTransform",
+          "Description": "The name of the AppSync API",
+          "Type": "String",
+        },
+        "AuthCognitoUserPoolId": Object {
+          "Default": "NONE",
+          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
+          "Type": "String",
+        },
+        "CreateAPIKey": Object {
+          "Default": 0,
+          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
+          "MaxValue": 1,
+          "MinValue": 0,
+          "Type": "Number",
+        },
+        "DynamoDBBillingMode": Object {
+          "AllowedValues": Array [
+            "PAY_PER_REQUEST",
+            "PROVISIONED",
+          ],
+          "Default": "PAY_PER_REQUEST",
+          "Description": "Configure @model types to create DynamoDB tables with PAY_PER_REQUEST or PROVISIONED billing modes.",
+          "Type": "String",
+        },
+        "DynamoDBEnablePointInTimeRecovery": Object {
+          "AllowedValues": Array [
+            "true",
+            "false",
+          ],
+          "Default": "false",
+          "Description": "Whether to enable Point in Time Recovery on the table",
+          "Type": "String",
+        },
+        "DynamoDBEnableServerSideEncryption": Object {
+          "AllowedValues": Array [
+            "true",
+            "false",
+          ],
+          "Default": "true",
+          "Description": "Enable server side encryption powered by KMS.",
+          "Type": "String",
+        },
+        "DynamoDBModelTableReadIOPS": Object {
+          "Default": 5,
+          "Description": "The number of read IOPS the table should support.",
+          "Type": "Number",
+        },
+        "DynamoDBModelTableWriteIOPS": Object {
+          "Default": 5,
+          "Description": "The number of write IOPS the table should support.",
+          "Type": "Number",
+        },
+        "GetAttGraphQLAPIApiId": StringParameter {
+          "Description": "Auto-generated parameter that forwards Fn.GetAtt(GraphQLAPI, ApiId) through to nested stacks.",
+          "Type": "String",
+        },
+        "S3DeploymentBucket": Object {
+          "Description": "The S3 bucket containing all deployment assets for the project.",
+          "Type": "String",
+        },
+        "S3DeploymentRootKey": Object {
+          "Description": "An S3 key relative to the S3DeploymentBucket that points to the root of the deployment directory.",
+          "Type": "String",
+        },
+        "env": Object {
+          "Default": "NONE",
+          "Description": "The environment name. e.g. Dev, Test, or Production",
+          "Type": "String",
+        },
+      },
+      "Resources": Object {
+        "InvokeRecommendedPostsLambdaDataSource": Object {
+          "DependsOn": "RecommendedPostsLambdaDataSource",
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "AppSyncApiId",
+            },
+            "DataSourceName": "RecommendedPostsLambdaDataSource",
+            "FunctionVersion": "2018-05-29",
+            "Name": "InvokeRecommendedPostsLambdaDataSource",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/pipelineFunctions/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "InvokeRecommendedPostsLambdaDataSource",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/pipelineFunctions/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "InvokeRecommendedPostsLambdaDataSource",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+          },
+          "Type": "AWS::AppSync::FunctionConfiguration",
+        },
+        "InvokeTagCloudLambdaDataSource": Object {
+          "DependsOn": "TagCloudLambdaDataSource",
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "AppSyncApiId",
+            },
+            "DataSourceName": "TagCloudLambdaDataSource",
+            "FunctionVersion": "2018-05-29",
+            "Name": "InvokeTagCloudLambdaDataSource",
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/pipelineFunctions/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "InvokeTagCloudLambdaDataSource",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/pipelineFunctions/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "InvokeTagCloudLambdaDataSource",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+          },
+          "Type": "AWS::AppSync::FunctionConfiguration",
+        },
+        "QueryrecommendedPostsResolver": Object {
+          "DependsOn": "InvokeRecommendedPostsLambdaDataSource",
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "AppSyncApiId",
+            },
+            "FieldName": "recommendedPosts",
+            "Kind": "PIPELINE",
+            "PipelineConfig": Object {
+              "Functions": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "InvokeRecommendedPostsLambdaDataSource",
+                    "FunctionId",
+                  ],
+                },
+              ],
+            },
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "recommendedPosts",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "recommendedPosts",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Query",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "QuerytagCloudResolver": Object {
+          "DependsOn": "InvokeTagCloudLambdaDataSource",
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "AppSyncApiId",
+            },
+            "FieldName": "tagCloud",
+            "Kind": "PIPELINE",
+            "PipelineConfig": Object {
+              "Functions": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "InvokeTagCloudLambdaDataSource",
+                    "FunctionId",
+                  ],
+                },
+              ],
+            },
+            "RequestMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "tagCloud",
+                        "req",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "ResponseMappingTemplateS3Location": Object {
+              "Fn::Sub": Array [
+                "s3://\${S3DeploymentBucket}/\${S3DeploymentRootKey}/resolvers/\${ResolverFileName}",
+                Object {
+                  "ResolverFileName": Object {
+                    "Fn::Join": Array [
+                      ".",
+                      Array [
+                        "Query",
+                        "tagCloud",
+                        "res",
+                        "vtl",
+                      ],
+                    ],
+                  },
+                  "S3DeploymentBucket": Object {
+                    "Ref": "S3DeploymentBucket",
+                  },
+                  "S3DeploymentRootKey": Object {
+                    "Ref": "S3DeploymentRootKey",
+                  },
+                },
+              ],
+            },
+            "TypeName": "Query",
+          },
+          "Type": "AWS::AppSync::Resolver",
+        },
+        "RecommendedPostsLambdaDataSource": Object {
+          "DependsOn": "RecommendedPostsLambdaDataSourceRole",
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "AppSyncApiId",
+            },
+            "LambdaConfig": Object {
+              "LambdaFunctionArn": Object {
+                "Fn::If": Array [
+                  "HasEnvironmentParameter",
+                  Object {
+                    "Fn::Sub": Array [
+                      "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-recommended-posts",
+                      Object {
+                        "env": Object {
+                          "Ref": "env",
+                        },
+                      },
+                    ],
+                  },
+                  Object {
+                    "Fn::Sub": Array [
+                      "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-recommended-posts",
+                      Object {},
+                    ],
+                  },
+                ],
+              },
+            },
+            "Name": "RecommendedPostsLambdaDataSource",
+            "ServiceRoleArn": Object {
+              "Fn::GetAtt": Array [
+                "RecommendedPostsLambdaDataSourceRole",
+                "Arn",
+              ],
+            },
+            "Type": "AWS_LAMBDA",
+          },
+          "Type": "AWS::AppSync::DataSource",
+        },
+        "RecommendedPostsLambdaDataSourceRole": Object {
+          "Properties": Object {
+            "AssumeRolePolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": Object {
+                    "Service": "appsync.amazonaws.com",
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "Policies": Array [
+              Object {
+                "PolicyDocument": Object {
+                  "Statement": Array [
+                    Object {
+                      "Action": Array [
+                        "lambda:InvokeFunction",
+                      ],
+                      "Effect": "Allow",
+                      "Resource": Object {
+                        "Fn::If": Array [
+                          "HasEnvironmentParameter",
+                          Object {
+                            "Fn::Sub": Array [
+                              "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-recommended-posts",
+                              Object {
+                                "env": Object {
+                                  "Ref": "env",
+                                },
+                              },
+                            ],
+                          },
+                          Object {
+                            "Fn::Sub": Array [
+                              "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-recommended-posts",
+                              Object {},
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                  "Version": "2012-10-17",
+                },
+                "PolicyName": "InvokeLambdaFunction",
+              },
+            ],
+            "RoleName": Object {
+              "Fn::If": Array [
+                "HasEnvironmentParameter",
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "RecommendedPosts21a8",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                      Object {
+                        "Ref": "env",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "RecommendedPosts21a8",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+          "Type": "AWS::IAM::Role",
+        },
+        "TagCloudLambdaDataSource": Object {
+          "DependsOn": "TagCloudLambdaDataSourceRole",
+          "Properties": Object {
+            "ApiId": Object {
+              "Ref": "AppSyncApiId",
+            },
+            "LambdaConfig": Object {
+              "LambdaFunctionArn": Object {
+                "Fn::If": Array [
+                  "HasEnvironmentParameter",
+                  Object {
+                    "Fn::Sub": Array [
+                      "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-tag-cloud",
+                      Object {
+                        "env": Object {
+                          "Ref": "env",
+                        },
+                      },
+                    ],
+                  },
+                  Object {
+                    "Fn::Sub": Array [
+                      "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-tag-cloud",
+                      Object {},
+                    ],
+                  },
+                ],
+              },
+            },
+            "Name": "TagCloudLambdaDataSource",
+            "ServiceRoleArn": Object {
+              "Fn::GetAtt": Array [
+                "TagCloudLambdaDataSourceRole",
+                "Arn",
+              ],
+            },
+            "Type": "AWS_LAMBDA",
+          },
+          "Type": "AWS::AppSync::DataSource",
+        },
+        "TagCloudLambdaDataSourceRole": Object {
+          "Properties": Object {
+            "AssumeRolePolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": Object {
+                    "Service": "appsync.amazonaws.com",
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "Policies": Array [
+              Object {
+                "PolicyDocument": Object {
+                  "Statement": Array [
+                    Object {
+                      "Action": Array [
+                        "lambda:InvokeFunction",
+                      ],
+                      "Effect": "Allow",
+                      "Resource": Object {
+                        "Fn::If": Array [
+                          "HasEnvironmentParameter",
+                          Object {
+                            "Fn::Sub": Array [
+                              "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-tag-cloud",
+                              Object {
+                                "env": Object {
+                                  "Ref": "env",
+                                },
+                              },
+                            ],
+                          },
+                          Object {
+                            "Fn::Sub": Array [
+                              "arn:aws:lambda:\${AWS::Region}:\${AWS::AccountId}:function:\${env}-tag-cloud",
+                              Object {},
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                  "Version": "2012-10-17",
+                },
+                "PolicyName": "InvokeLambdaFunction",
+              },
+            ],
+            "RoleName": Object {
+              "Fn::If": Array [
+                "HasEnvironmentParameter",
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "TagClouda3c5",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                      Object {
+                        "Ref": "env",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "-",
+                    Array [
+                      "TagClouda3c5",
+                      Object {
+                        "Ref": "GetAttGraphQLAPIApiId",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+          "Type": "AWS::IAM::Role",
         },
       },
     },

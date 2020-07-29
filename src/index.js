@@ -1,9 +1,8 @@
 import { GraphQLTransform } from "graphql-transformer-core";
 import { DynamoDBModelTransformer } from "graphql-dynamodb-transformer";
-import { SearchableModelTransformer } from "graphql-elasticsearch-transformer";
 import { ModelConnectionTransformer } from "graphql-connection-transformer";
 import { ModelAuthTransformer } from "graphql-auth-transformer";
-import { VersionedModelTransformer } from "graphql-versioned-transformer";
+import { FunctionTransformer } from "graphql-function-transformer";
 import { KeyTransformer } from "graphql-key-transformer";
 import { readFileSync, writeFileSync } from "fs";
 import { map, endsWith, reduce, toPairs } from "ramda";
@@ -28,8 +27,8 @@ export const getCodeGenSchema = (options, schema) => {
 			new DynamoDBModelTransformer(),
 			new ModelAuthTransformer(),
 			new KeyTransformer(),
-			new VersionedModelTransformer(),
 			new ModelConnectionTransformer(),
+			new FunctionTransformer(),
 			...transformers,
 		],
 	});
@@ -49,7 +48,7 @@ export class AppsyncGQLSchemaStack extends Stack {
 		const apiName = `${name}-graphql-api`;
 		const api = new GraphQLApi(this, apiName, {
 			name: apiName,
-			schemaDefinition: schema,
+			schemaDefinition: codegen.schema,
 		});
 		this.dynamoStacks = map(
 			dynamo.createDynamoTableDataSource(this, props, api),

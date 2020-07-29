@@ -4,8 +4,11 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --watchAll",
-		"test:cdk": "npx webpack --config ./builds/cdk/webpack.config.js"
+		"test:watch": "jest --watch",
+		"test:cdk": "npx webpack --config ./builds/cdk/webpack.config.js",
+		"test:manual": "npx babel-node builds/manual-test/index.js",
+		"build:src": "npx babel ./src --out-dir=./.output --source-maps --config-file ./.babelrc",
+		"build:cdk": "node ./builds/cdk/index.js"
 	},
 	"author": "",
 	"license": "ISC",
@@ -20,6 +23,7 @@
 		"graphql-connection-transformer": "^4.18.3",
 		"graphql-dynamodb-transformer": "^6.19.4",
 		"graphql-elasticsearch-transformer": "^4.7.6",
+		"graphql-function-transformer": "^2.3.14",
 		"graphql-key-transformer": "^2.19.3",
 		"graphql-transformer-core": "^6.19.3",
 		"graphql-versioned-transformer": "^4.15.11",
@@ -27,7 +31,8 @@
 	},
 	"devDependencies": {
 		"@aws-cdk/assert": "1.53.0",
-		"@babel/core": "^7.10.4",
+		"@babel/cli": "^7.10.5",
+		"@babel/core": "^7.10.5",
 		"@babel/node": "^7.10.5",
 		"@babel/preset-env": "^7.10.4",
 		"@babel/register": "^7.10.5",

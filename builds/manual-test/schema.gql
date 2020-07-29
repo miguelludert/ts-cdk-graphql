@@ -17,3 +17,14 @@ type Comment
 	body: String!
 	publishDate: Int!
 }
+
+type TagCloud {
+	size: Int!
+	tag: String!
+}
+
+type Query {
+	tagCloud(blogId: String!): [TagCloud] @function(name: "${env}-tag-cloud")
+	recommendedPosts(blogPostId: String!): [BlogPost]
+		@function(name: "${env}-recommended-posts")
+}

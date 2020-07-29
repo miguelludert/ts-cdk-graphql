@@ -11,7 +11,7 @@
 			}
 		],
 		"dataSourceProps": [
-			"blog-post-table-ds",
+			"blogPostTable",
 			"A dynamo table datasource for BlogPost"
 		],
 		"GSI": [
@@ -27,7 +27,7 @@
 	},
 	"expectedComment": {
 		"dataSourceProps": [
-			"comment-table-ds",
+			"commentTable",
 			"A dynamo table datasource for Comment"
 		],
 		"tableProps": [

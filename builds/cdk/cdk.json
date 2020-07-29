@@ -1,5 +1,5 @@
 {
-	"app": "npx webpack && node .output.js",
+	"app": "npm run build:src && node ./index.js",
 	"context": {
 		"@aws-cdk/core:enableStackNameDuplicates": "true",
 		"aws-cdk:enableDiffNoFail": "true"

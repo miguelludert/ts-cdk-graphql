@@ -20,7 +20,7 @@ describe("Code Generation", () => {
 	describe("createDynamoTableProps", () => {
 		it("should generate get the data sources for a schema", () => {
 			const { expectedBlogPost, expectedComment, input } = jest.requireActual(
-				"./fixtures/createDynamoTableProps.json",
+				"./fixtures/dynamo.createDynamoTableProps.json",
 			);
 			const actualBlogPost = underTest.createDynamoTableProps(
 				"BlogPostTable",
@@ -39,7 +39,7 @@ describe("Code Generation", () => {
 	describe("createDynamoResolverProps", () => {
 		it("should gather the dynamo resolvers", () => {
 			const { expected, input } = jest.requireActual(
-				"./fixtures/createDynamoResolverProps.json",
+				"./fixtures/dynamo.createDynamoResolverProps.json",
 			);
 			const actual = underTest.createDynamoResolverProps(
 				"BlogPostTable",
@@ -52,7 +52,7 @@ describe("Code Generation", () => {
 	describe("createDynamoTableDataSource", () => {
 		it("should create a cdk table and datasource for a configuration ", () => {
 			const { scope, options, dynamoParams } = jest.requireActual(
-				"./fixtures/createDynamoTableDataSource.json",
+				"./fixtures/dynamo.createDynamoTableDataSource.json",
 			);
 			const {
 				dataSourceProps,
@@ -71,6 +71,7 @@ describe("Code Generation", () => {
 					.mockReturnValueOnce("222"),
 			};
 			api.addDynamoDbDataSource.mockReturnValue(dataSource);
+			const { createDynamoBaseResolverProps } = underTest;
 			const actual = underTest.createDynamoTableDataSource(
 				scope,
 				options,
@@ -87,8 +88,12 @@ describe("Code Generation", () => {
 				dataSourceProps[1],
 				actual.table,
 			);
-			expect(dataSource.createResolver).toHaveBeenCalledWith(resolverProps[0]);
-			expect(dataSource.createResolver).toHaveBeenCalledWith(resolverProps[1]);
+			expect(dataSource.createResolver).toHaveBeenCalledWith(
+				createDynamoBaseResolverProps(resolverProps[0]),
+			);
+			expect(dataSource.createResolver).toHaveBeenCalledWith(
+				createDynamoBaseResolverProps(resolverProps[1]),
+			);
 		});
 	});
 	describe("getDynamoAttributeProps", () => {

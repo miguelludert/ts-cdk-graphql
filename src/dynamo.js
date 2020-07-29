@@ -11,6 +11,7 @@ import {
 } from "ramda";
 import { paramCase, camelCase } from "change-case";
 import { Table, AttributeType } from "@aws-cdk/aws-dynamodb";
+import { MappingTemplate, BaseResolverProps } from "@aws-cdk/aws-appsync";
 
 export const writeFile = (path, content) => {
 	writeFileSync(path, content, "utf8");
@@ -63,7 +64,7 @@ export const createDynamoTableProps = (key, stackName, codeGen) => {
 	});
 	const result = {
 		dataSourceProps: [
-			`${tableName}-ds`,
+			camelCase(tableName),
 			`A dynamo table datasource for ${stackName}`,
 		],
 		tableProps: [
@@ -108,6 +109,17 @@ export const createDynamoResolverProps = curry((key, stackName, codegen) => {
 	};
 });
 
+export const createDynamoBaseResolverProps = resolverProp => ({
+	typeName: resolverProp.typeName,
+	fieldName: resolverProp.fieldName,
+	requestMappingTemplate: MappingTemplate.fromString(
+		resolverProp.requestMappingTemplate,
+	),
+	responseMappingTemplate: MappingTemplate.fromString(
+		resolverProp.responseMappingTemplate,
+	),
+});
+
 export const createDynamoTableDataSource = curry(
 	(scope, options, api, dynamoParams) => {
 		const { resolverProps, dataSourceProps, tableProps } = dynamoParams;
@@ -124,9 +136,12 @@ export const createDynamoTableDataSource = curry(
 		if (dynamoParams.LSI) {
 			dynamoParams.LSI.map(index => table.addLocalSecondaryIndex(index));
 		}
-		const resolvers = resolverProps.map(resolverProp =>
-			dataSource.createResolver(resolverProp),
-		);
+		const resolvers = resolverProps.map(resolverProp => {
+			const modifiedProp = { resolverProp };
+			return dataSource.createResolver(
+				createDynamoBaseResolverProps(resolverProp),
+			);
+		});
 		return {
 			table,
 			dataSource,

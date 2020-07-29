@@ -19,6 +19,11 @@ writeFileSync(
 	JSON.stringify(dynamoProps, null, 2),
 );
 
+writeFileSync(
+	join(__dirname, "codegen.json"),
+	JSON.stringify(codegen, null, 2),
+);
+
 const app = new cdk.App();
 new AppsyncGQLSchemaStack(app, "test", {
 	schema,

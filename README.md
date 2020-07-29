@@ -15,7 +15,9 @@ successfully with minimal initial configuration.
 
 Once the basic cdk stack objects have been created, the next goals include:
 
-- CDK.json management for different environments
+- create CLI tool (maybe different project?)
+- Dump the cdk props via CLI to a directory, that matches the overrides.
+- CDK.json management via CLI for different environments
 
 ## Stack options
 

@@ -1,0 +1,30 @@
+{
+	"options": {
+		"prefix": "unit-test",
+		"lambdaSrcPath": "/path/to/src"
+	},
+	"codegen": {
+		"stackMapping": {
+			"QueryMyFunctionResolver": "FunctionDirectiveStack",
+			"QueryInvokeMyFunctionResolver": "FunctionDirectiveStack",
+			"MyOtherFunctionLambdaDataSource": "FunctionDirectiveStack",
+			"InvokeMyOtherFunctionLambdaDataSource": "FunctionDirectiveStack",
+			"MyFunctionLambdaDataSource": "FunctionDirectiveStack",
+			"InvokeMyFunctionLambdaDataSource": "FunctionDirectiveStack",
+			"MyOtherFunctionLambdaDataSource": "FunctionDirectiveStack",
+			"InvokeMyOtherFunctionLambdaDataSource": "FunctionDirectiveStack",
+			"CommentTable": "Comment",
+			"BlogTable": "Blog"
+		}
+	},
+	"expected": [
+		{
+			"dataSourceProps": "QueryMyFunctionResolver",
+			"resolverProp": "QueryMyFunctionResolver"
+		},
+		{
+			"dataSourceProps": "QueryInvokeMyFunctionResolver",
+			"resolverProp": "QueryInvokeMyFunctionResolver"
+		}
+	]
+}

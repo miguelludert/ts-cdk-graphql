@@ -9,7 +9,7 @@ describe("Index", () => {
 	describe("getCodeGenSchema", () => {
 		it("should generate a schema", () => {
 			const gqlSchema = readFileSync(
-				join(__dirname, "./fixtures/getCodeGenSchema.gql"),
+				join(__dirname, "./fixtures/index.getCodeGenSchema.gql"),
 				"utf8",
 			);
 			const options = {};
