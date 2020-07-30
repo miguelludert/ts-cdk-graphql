@@ -6,7 +6,7 @@
 	"scripts": {
 		"test:watch": "jest --watch",
 		"test:cdk": "npx webpack --config ./builds/cdk/webpack.config.js",
-		"test:manual": "npx babel-node builds/manual-test/index.js",
+		"dump": "npx babel-node builds/dump/index.js",
 		"build:src": "npx babel ./src --out-dir=./.output --source-maps --config-file ./.babelrc",
 		"build:cdk": "node ./builds/cdk/index.js"
 	},

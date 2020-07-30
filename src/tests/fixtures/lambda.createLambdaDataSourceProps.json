@@ -1,8 +1,8 @@
 {
 	"expected": {
-		"dataSourceName": "prefix-my-function-data-source",
+		"dataSourceName": "my-function-data-source",
 		"dataSourceProps": {
-			"name": "prefix-my-function-data-source"
+			"name": "my-function-data-source"
 		},
 		"functionProps": {
 			"functionSrcPath": "/path/to/src/my-function-data-source",

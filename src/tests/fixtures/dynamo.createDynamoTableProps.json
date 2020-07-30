@@ -1,19 +1,14 @@
 {
 	"expectedBlogPost": {
-		"tableProps": [
-			"blog-post-table",
-			{
-				"tableName": "blog-post-table",
-				"partitionKey": {
-					"name": "blogPostId",
-					"type": "S"
-				}
+		"dataSourceName": "blogPostTable",
+		"description": "A dynamo table datasource for BlogPost",
+		"tableProps": {
+			"tableName": "blog-post-table",
+			"partitionKey": {
+				"name": "blogPostId",
+				"type": "S"
 			}
-		],
-		"dataSourceProps": [
-			"blogPostTable",
-			"A dynamo table datasource for BlogPost"
-		],
+		},
 		"GSI": [
 			{
 				"indexName": "byTitle",
@@ -26,24 +21,19 @@
 		]
 	},
 	"expectedComment": {
-		"dataSourceProps": [
-			"commentTable",
-			"A dynamo table datasource for Comment"
-		],
-		"tableProps": [
-			"comment-table",
-			{
-				"tableName": "comment-table",
-				"partitionKey": {
-					"name": "blogPostId",
-					"type": "S"
-				},
-				"sortKey": {
-					"name": "commentId",
-					"type": "S"
-				}
+		"dataSourceName": "commentTable",
+		"description": "A dynamo table datasource for Comment",
+		"tableProps": {
+			"tableName": "comment-table",
+			"partitionKey": {
+				"name": "blogPostId",
+				"type": "S"
+			},
+			"sortKey": {
+				"name": "commentId",
+				"type": "S"
 			}
-		],
+		},
 		"LSI": [
 			{
 				"indexName": "byIds",

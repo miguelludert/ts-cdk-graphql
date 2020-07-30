@@ -1,20 +1,21 @@
-type BlogPost
-	@model
-	@key(fields: ["blogPostId"])
-	@key(name: "byTitle", fields: ["title"]) {
-	blogPostId: String!
-	title: String
-	#comments: [Comment] @connection(name: "Comment")
+type Blog @model @key(fields: ["blogId"]) {
+	blogId: String!
+	name: String!
 }
-
+type BlogPost @model @key(fields: ["blogId", "blogPostId"]) {
+	blogId: String!
+	blogPostId: String!
+	title: String!
+	body: String!
+}
 type Comment
 	@model
 	@key(fields: ["blogPostId", "commentId"])
-	@key(name: "byKeywords", fields: ["keywords"]) {
+	@key(name: "byPublishDate", fields: ["publishDate"]) {
 	blogPostId: String!
 	commentId: String!
-	keywords: [String]!
-	body: String
+	body: String!
+	publishDate: Int!
 }
 
 type TagCloud {

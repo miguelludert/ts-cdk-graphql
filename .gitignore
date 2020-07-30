@@ -1,6 +1,6 @@
 package-lock.json
 .output.js
-/.output
+.output
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,macos,git,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,macos,git,windows

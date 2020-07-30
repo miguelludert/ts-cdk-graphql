@@ -1,7 +1,22 @@
-import * as underTest from "../dynamo";
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { MappingTemplate } from "@aws-cdk/aws-appsync";
+import { curry } from "ramda";
+import codegen from "./fixtures/codegen.json";
+
+// this is an experimental function to enable mocking within the same file as the invoked function
+export const prepModule = name => {
+	jest.mock(name);
+	const mock = jest.requireMock(name);
+	const underTest = jest.requireActual(name);
+	beforeEach(() => {
+		jest.resetAllMocks();
+	});
+	return {
+		mock,
+		underTest,
+	};
+};
 
 jest.mock("@aws-cdk/aws-dynamodb", () => {
 	const dynamoModule = jest.requireActual("@aws-cdk/aws-dynamodb");
@@ -17,6 +32,8 @@ jest.mock("@aws-cdk/aws-dynamodb", () => {
 });
 
 describe("Code Generation", () => {
+	const { mock, underTest } = prepModule("../dynamo");
+
 	describe("createDynamoTableProps", () => {
 		it("should generate get the data sources for a schema", () => {
 			const { expectedBlogPost, expectedComment, input } = jest.requireActual(
@@ -55,6 +72,8 @@ describe("Code Generation", () => {
 				"./fixtures/dynamo.createDynamoTableDataSource.json",
 			);
 			const {
+				dataSourceName,
+				description,
 				dataSourceProps,
 				tableProps,
 				resolverProps,
@@ -78,14 +97,18 @@ describe("Code Generation", () => {
 				api,
 				dynamoParams,
 			);
-			expect(actual.table.mock).toHaveBeenCalledWith(scope, ...tableProps);
+			expect(actual.table.mock).toHaveBeenCalledWith(
+				scope,
+				dataSourceName,
+				tableProps,
+			);
 			expect(actual.table.addLocalSecondaryIndex).toHaveBeenCalledWith(LSI[0]);
 			expect(actual.table.addGlobalSecondaryIndex).toHaveBeenCalledWith(GSI[0]);
 			expect(actual.resolvers).toEqual(["111", "222"]);
 			expect(actual.dataSource).toEqual(dataSource);
 			expect(api.addDynamoDbDataSource).toHaveBeenCalledWith(
-				dataSourceProps[0],
-				dataSourceProps[1],
+				dataSourceName,
+				description,
 				actual.table,
 			);
 			expect(dataSource.createResolver).toHaveBeenCalledWith(
@@ -126,6 +149,41 @@ describe("Code Generation", () => {
 				keySchema,
 				attributeDefinitions,
 			);
+			expect(actual).toEqual(expected);
+		});
+	});
+
+	describe("getDynamoDataSources", () => {
+		it("should create parameters", () => {
+			const codegen = {
+				stackMapping: {
+					BlogPost: "BlogPost",
+					BlogPostTable: "BlogPost",
+					Comment: "Comment",
+					CommentTable: "Comment",
+				},
+			};
+			const expected = [
+				{
+					dynamoProps: "BlogPostTable:BlogPost",
+					resolverProps: "BlogPostTable:BlogPost",
+				},
+				{
+					dynamoProps: "CommentTable:Comment",
+					resolverProps: "CommentTable:Comment",
+				},
+			];
+			const params = jest.requireMock("../dynamo");
+			const paramImpl = curry((name, key, value) => ({
+				[name]: `${key}:${value}`,
+			}));
+			params.createDynamoTableProps.mockImplementation(
+				paramImpl("dynamoProps"),
+			);
+			params.createDynamoResolverProps.mockImplementation(
+				paramImpl("resolverProps"),
+			);
+			const actual = underTest.getDynamoDataSources(null, codegen);
 			expect(actual).toEqual(expected);
 		});
 	});

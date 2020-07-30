@@ -11,16 +11,7 @@ import * as dynamo from "./dynamo";
 import { Stack } from "@aws-cdk/core";
 import { GraphQLApi } from "@aws-cdk/aws-appsync";
 
-export const getDynamoProps = codeGen => {
-	const stackMapping = toPairs(codeGen.stackMapping);
-	const tables = stackMapping.filter(([key]) => key.endsWith("Table"));
-	return tables.map(([key, stackName]) => ({
-		...dynamo.createDynamoTableProps(key, stackName, codeGen),
-		...dynamo.createDynamoResolverProps(key, stackName, codeGen),
-	}));
-};
-
-export const getCodeGenSchema = (options, schema) => {
+export const getCodeGenSchema = (options, schemaText) => {
 	const transformers = (options && options.transformers) || [];
 	const transformer = new GraphQLTransform({
 		transformers: [
@@ -32,7 +23,7 @@ export const getCodeGenSchema = (options, schema) => {
 			...transformers,
 		],
 	});
-	const codeGenSchema = transformer.transform(schema);
+	const codeGenSchema = transformer.transform(schemaText);
 	return codeGenSchema;
 };
 
@@ -42,9 +33,9 @@ export class AppsyncGQLSchemaStack extends Stack {
 	constructor(scope, name, props) {
 		// read schema
 		super(scope, name, props);
-		const schema = readSchema(props.schema);
+		const schema = props.schemaText || readSchema(props.schemaPath);
 		const codegen = getCodeGenSchema(props, schema);
-		const dynamoProps = getDynamoProps(codegen);
+		const dynamoProps = dynamo.getDynamoDataSources(props, codegen);
 		const apiName = `${name}-graphql-api`;
 		const api = new GraphQLApi(this, apiName, {
 			name: apiName,
@@ -54,5 +45,7 @@ export class AppsyncGQLSchemaStack extends Stack {
 			dynamo.createDynamoTableDataSource(this, props, api),
 			dynamoProps,
 		);
+		this.functionStacks = [];
+		this.httpStacks = [];
 	}
 }

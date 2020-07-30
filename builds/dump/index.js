@@ -1,0 +1,10 @@
+require("@babel/register");
+const cdk = require("@aws-cdk/core");
+const { join } = require("path");
+const { mkdirSync, writeFileSync } = require("fs");
+const { readSchema } = require("../../src/");
+const { dump } = require("../../src/dump");
+const schema = join(__dirname, "schema.gql");
+const dumpDir = join(__dirname, ".output");
+const schemaText = readSchema(schema);
+dump({ dumpDir }, schemaText);

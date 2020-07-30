@@ -4,18 +4,13 @@
 		"scope": "scope"
 	},
 	"dynamoParams": {
-		"dataSourceProps": [
-			"oscar-meyer-table-ds",
-			"The data source for table 'oscar-meyer'"
-		],
-		"tableProps": [
-			"oscar-meyer-table",
-			{
-				"tableName": "oscar-meyer",
-				"partitionKey": {},
-				"sortKey": {}
-			}
-		],
+		"dataSourceName": "blogPostTable",
+		"description": "A dynamo table datasource for BlogPost",
+		"tableProps": {
+			"tableName": "oscar-meyer",
+			"partitionKey": {},
+			"sortKey": {}
+		},
 		"GSI": [{ "GSI": "GSI" }],
 		"LSI": [{ "LSI": "LSI" }],
 		"resolverProps": [

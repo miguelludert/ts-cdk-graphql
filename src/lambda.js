@@ -25,8 +25,8 @@ export const createLambdaDataSourceProps = curry(
 		const invokerName = getStack(codegen, resolverName).DependsOn;
 		const dataSourceName = getStack(codegen, resolverName).DependsOn;
 
-		const { prefix, lambdaSrcPath } = options;
-		const lambdaName = concat(prefix || "", paramCase(dataSourceName));
+		const { lambdaSrcPath } = options;
+		const lambdaName = paramCase(dataSourceName);
 		return {
 			dataSourceName: lambdaName,
 			dataSourceProps: {

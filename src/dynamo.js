@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from "fs";
 import {
 	defaultTo,
 	curry,
+	filter,
 	map,
 	endsWith,
 	reduce,
@@ -12,6 +13,7 @@ import {
 import { paramCase, camelCase } from "change-case";
 import { Table, AttributeType } from "@aws-cdk/aws-dynamodb";
 import { MappingTemplate, BaseResolverProps } from "@aws-cdk/aws-appsync";
+import * as self from "./dynamo";
 
 export const writeFile = (path, content) => {
 	writeFileSync(path, content, "utf8");
@@ -63,17 +65,12 @@ export const createDynamoTableProps = (key, stackName, codeGen) => {
 		}
 	});
 	const result = {
-		dataSourceProps: [
-			camelCase(tableName),
-			`A dynamo table datasource for ${stackName}`,
-		],
-		tableProps: [
+		dataSourceName: camelCase(key), // must be in camel case,
+		description: `A dynamo table datasource for ${stackName}`,
+		tableProps: {
 			tableName,
-			{
-				tableName,
-				...getDynamoAttributeProps(KeySchema, AttributeDefinitions),
-			},
-		],
+			...getDynamoAttributeProps(KeySchema, AttributeDefinitions),
+		},
 		...getIndex(GlobalSecondaryIndexes, "GSI"),
 		...getIndex(LocalSecondaryIndexes, "LSI"),
 	};
@@ -81,29 +78,24 @@ export const createDynamoTableProps = (key, stackName, codeGen) => {
 };
 
 export const createDynamoResolverProps = curry((key, stackName, codegen) => {
-	const reducer = (acc, [key, template]) => {
-		const [typeName, fieldName, type] = key.split(".");
+	const reducer = (acc, [key, value]) => {
+		const fieldName = value.Properties.FieldName;
+		const typeName = value.Properties.TypeName;
 		const accKey = `${typeName}.${fieldName}`;
-		let obj = acc[accKey];
-		if (!obj) {
-			obj = {
-				typeName,
-				fieldName,
-			};
-		}
-		const typeFieldName = {
-			req: "requestMappingTemplate",
-			res: "responseMappingTemplate",
+		acc[`${accKey}`] = {
+			typeName,
+			fieldName,
+			requestMappingTemplate: codegen.resolvers[`${accKey}.req.vtl`],
+			responseMappingTemplate: codegen.resolvers[`${accKey}.res.vtl`],
 		};
-		obj[typeFieldName[type]] = template;
-		acc[accKey] = obj;
 		return acc;
 	};
 	const resolverProps = pipe(
 		toPairs,
+		filter(([key, value]) => value.Type == "AWS::AppSync::Resolver"),
 		reduce(reducer, {}),
 		values,
-	)(codegen.resolvers);
+	)(codegen.stacks[stackName].Resources);
 	return {
 		resolverProps,
 	};
@@ -122,12 +114,18 @@ export const createDynamoBaseResolverProps = resolverProp => ({
 
 export const createDynamoTableDataSource = curry(
 	(scope, options, api, dynamoParams) => {
-		const { resolverProps, dataSourceProps, tableProps } = dynamoParams;
+		const {
+			resolverProps,
+			dataSourceName,
+			description,
+			dataSourceProps,
+			tableProps,
+		} = dynamoParams;
 		const { prefix } = options || {};
-		const table = new Table(scope, ...tableProps);
+		const table = new Table(scope, dataSourceName, tableProps);
 		const dataSource = api.addDynamoDbDataSource(
-			dataSourceProps[0],
-			dataSourceProps[1],
+			dataSourceName,
+			description,
 			table,
 		);
 		if (dynamoParams.GSI) {
@@ -149,3 +147,12 @@ export const createDynamoTableDataSource = curry(
 		};
 	},
 );
+
+export const getDynamoDataSources = (options, codeGen) => {
+	const stackMapping = toPairs(codeGen.stackMapping);
+	const tables = stackMapping.filter(([key]) => key.endsWith("Table"));
+	return tables.map(([key, stackName]) => ({
+		...self.createDynamoTableProps(key, stackName, codeGen),
+		...self.createDynamoResolverProps(key, stackName, codeGen),
+	}));
+};
