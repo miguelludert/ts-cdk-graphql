@@ -7,7 +7,9 @@
 		"test:watch": "jest --watch",
 		"test:cdk": "npx webpack --config ./builds/cdk/webpack.config.js",
 		"dump": "npx babel-node builds/dump/index.js",
-		"build:src": "npx babel ./src --out-dir=./.output --source-maps --config-file ./.babelrc",
+		"build:src": "npm run build:babel-src && npm run build:copy-defaults",
+		"build:babel-src": "npx babel ./src --out-dir=./.output --source-maps --config-file ./.babelrc",
+		"build:copy-defaults": "cp -rf ./src/defaults ./.output/defaults",
 		"build:cdk": "node ./builds/cdk/index.js"
 	},
 	"author": "",

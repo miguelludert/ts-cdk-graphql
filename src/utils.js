@@ -25,10 +25,9 @@ export const getDefaultNames = name => {
 };
 
 export const getProps = (defaultName, overrideName, value) => {
-	const toMerge = [
-		getDefault(defaultName),
-		value,
-		getOverride(overrideName),
-	].filter(x => x);
-	return Object.assign(...toMerge);
+	const defaultValue = getDefault(defaultName);
+	const overrideValue = getDefault(overrideName);
+	const toMerge = [defaultValue, value, overrideValue].filter(x => x);
+	const result = Object.assign(...toMerge);
+	return result;
 };

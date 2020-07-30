@@ -40,7 +40,6 @@ export const createLambdaDataSourceProps = curry(
 				name: camelCase(dataSourceName),
 			},
 			functionProps: {
-				runtime: "NODEJS_12_X",
 				handler: "index.handler",
 				functionSrcPath: join(lambdaSrcPath, paramCase(fieldName)),
 			},

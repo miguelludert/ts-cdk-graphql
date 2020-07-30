@@ -14,6 +14,7 @@ import { paramCase, camelCase } from "change-case";
 import { Table, AttributeType } from "@aws-cdk/aws-dynamodb";
 import { MappingTemplate, BaseResolverProps } from "@aws-cdk/aws-appsync";
 import * as self from "./dynamo";
+import { getProps } from "./utils";
 
 export const writeFile = (path, content) => {
 	writeFileSync(path, content, "utf8");
@@ -122,7 +123,12 @@ export const createDynamoTableDataSource = curry(
 			tableProps,
 		} = dynamoParams;
 		const { prefix } = options || {};
-		const table = new Table(scope, dataSourceName, tableProps);
+		const actualTableProps = getProps(
+			"TableProps",
+			"blog-table.tableProps",
+			tableProps,
+		);
+		const table = new Table(scope, dataSourceName, actualTableProps);
 		const dataSource = api.addDynamoDbDataSource(
 			dataSourceName,
 			description,

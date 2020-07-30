@@ -6,8 +6,7 @@
 		},
 		"functionProps": {
 			"functionSrcPath": "/path/to/src/my-function",
-			"handler": "index.handler",
-			"runtime": "NODEJS_12_X"
+			"handler": "index.handler"
 		}
 	},
 	"options": {
