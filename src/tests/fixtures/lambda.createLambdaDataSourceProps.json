@@ -2,10 +2,10 @@
 	"expected": {
 		"dataSourceName": "my-function-data-source",
 		"dataSourceProps": {
-			"name": "my-function-data-source"
+			"name": "myFunctionDataSource"
 		},
 		"functionProps": {
-			"functionSrcPath": "/path/to/src/my-function-data-source",
+			"functionSrcPath": "/path/to/src/my-function",
 			"handler": "index.handler",
 			"runtime": "NODEJS_12_X"
 		}
@@ -24,27 +24,29 @@
 		},
 		"stacks": {
 			"FunctionDirectiveStack": {
-				"MyFunctionDataSource": {},
-				"InvokeMyFunctionDataSource": {
-					"DependsOn": "MyFunctionDataSource"
-				},
-				"QueryMyFunctionResolver": {
-					"Properties": {
-						"TypeName": "Query",
-						"FieldName": "MyFunction"
+				"Resources": {
+					"MyFunctionDataSource": {},
+					"InvokeMyFunctionDataSource": {
+						"DependsOn": "MyFunctionDataSource"
 					},
-					"DependsOn": "MyFunctionDataSource"
-				},
-				"MyOtherFunctionDataSource": {},
-				"InvokeMyOtherFunctionDataSource": {
-					"DependsOn": "MyOtherFunctionDataSource"
-				},
-				"QueryMyOtherFunctionResolver": {
-					"Properties": {
-						"TypeName": "Query",
-						"FieldName": "MyOtherFunction"
+					"QueryMyFunctionResolver": {
+						"Properties": {
+							"TypeName": "Query",
+							"FieldName": "MyFunction"
+						},
+						"DependsOn": "InvokeMyFunctionDataSource"
 					},
-					"DependsOn": "InvokeMyOtherFunctionDataSource"
+					"MyOtherFunctionDataSource": {},
+					"InvokeMyOtherFunctionDataSource": {
+						"DependsOn": "MyOtherFunctionDataSource"
+					},
+					"QueryMyOtherFunctionResolver": {
+						"Properties": {
+							"TypeName": "Query",
+							"FieldName": "MyOtherFunction"
+						},
+						"DependsOn": "InvokeMyOtherFunctionDataSource"
+					}
 				}
 			}
 		}

@@ -29,6 +29,7 @@ export const dump = (options, schemaText) => {
 	const functionResolvers = `${dumpDir}/function-resolvers`;
 	const codegen = getCodeGenSchema(options, schemaText);
 	const dynamoDataSources = getDynamoDataSources(options, codegen);
+	const functionDataSources = getLambdaDataSources(options, codegen);
 
 	writeJson(`${dumpDir}/codegen.json`, codegen);
 	writeFile(`${dumpDir}/schema.gql`, codegen.schema);
@@ -59,5 +60,27 @@ export const dump = (options, schemaText) => {
 				responseMappingTemplate,
 			);
 		});
+	});
+
+	functionDataSources.forEach(datasource => {
+		const { dataSourceName } = datasource;
+		const toWrite = omit(["resolverProp"], datasource);
+		const newFileName = dataSourceName.replace("-lambda-data-source", "");
+		writeJson(join(functionProps, `${newFileName}.json`), toWrite);
+		const {
+			typeName,
+			fieldName,
+			requestMappingTemplate,
+			responseMappingTemplate,
+		} = datasource.resolver;
+		const fileName = `${typeName}.${fieldName}`;
+		writeFile(
+			join(functionResolvers, `${fileName}.res.vtl`),
+			requestMappingTemplate,
+		);
+		writeFile(
+			join(functionResolvers, `${fileName}.req.vtl`),
+			responseMappingTemplate,
+		);
 	});
 };

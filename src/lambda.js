@@ -13,29 +13,36 @@ import {
 	lensPath,
 } from "ramda";
 import { join } from "path";
-import { paramCase } from "change-case";
+import { paramCase, camelCase } from "change-case";
 import { Runtime } from "@aws-cdk/aws-lambda";
 
-export const getStack = curry((codegen, name) =>
-	view(lensPath(["stacks", "FunctionDirectiveStack", name]), codegen),
-);
+export const getStack = curry((codegen, name) => {
+	const result = view(
+		lensPath(["stacks", "FunctionDirectiveStack", "Resources", name]),
+		codegen,
+	);
+	return result;
+});
 
 export const createLambdaDataSourceProps = curry(
 	(options, codegen, resolverName) => {
-		const invokerName = getStack(codegen, resolverName).DependsOn;
-		const dataSourceName = getStack(codegen, resolverName).DependsOn;
-
 		const { lambdaSrcPath } = options;
-		const lambdaName = paramCase(dataSourceName);
+
+		const queryResolverStack = getStack(codegen, resolverName);
+		const fieldName = queryResolverStack.Properties.FieldName;
+		const invokerName = queryResolverStack.DependsOn;
+
+		const dataSourceName = getStack(codegen, invokerName).DependsOn;
+		const lambdaName = paramCase(fieldName);
 		return {
-			dataSourceName: lambdaName,
+			dataSourceName: paramCase(dataSourceName),
 			dataSourceProps: {
-				name: lambdaName,
+				name: camelCase(dataSourceName),
 			},
 			functionProps: {
 				runtime: "NODEJS_12_X",
 				handler: "index.handler",
-				functionSrcPath: join(lambdaSrcPath, paramCase(dataSourceName)),
+				functionSrcPath: join(lambdaSrcPath, paramCase(fieldName)),
 			},
 		};
 	},

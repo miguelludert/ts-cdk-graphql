@@ -21,19 +21,21 @@
 		},
 		"stacks": {
 			"FunctionDirectiveStack": {
-				"QueryMyFunctionResolver": {
-					"Properties": {
-						"TypeName": "Query",
-						"FieldName": "MyFunction"
+				"Resources": {
+					"QueryMyFunctionResolver": {
+						"Properties": {
+							"TypeName": "Query",
+							"FieldName": "MyFunction"
+						},
+						"DependsOn": "InvokeMyFunctionDataSource"
 					},
-					"DependsOn": "InvokeMyFunctionDataSource"
-				},
-				"QueryMyOtherFunctionResolver": {
-					"Properties": {
-						"TypeName": "Query",
-						"FieldName": "MyOtherFunction"
-					},
-					"DependsOn": "InvokeMyOtherFunctionDataSource"
+					"QueryMyOtherFunctionResolver": {
+						"Properties": {
+							"TypeName": "Query",
+							"FieldName": "MyOtherFunction"
+						},
+						"DependsOn": "InvokeMyOtherFunctionDataSource"
+					}
 				}
 			}
 		}

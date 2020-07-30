@@ -6,5 +6,6 @@ const { readSchema } = require("../../src/");
 const { dump } = require("../../src/dump");
 const schema = join(__dirname, "schema.gql");
 const dumpDir = join(__dirname, ".output");
+const lambdaSrcPath = join(__dirname, "src");
 const schemaText = readSchema(schema);
-dump({ dumpDir }, schemaText);
+dump({ dumpDir, lambdaSrcPath }, schemaText);
