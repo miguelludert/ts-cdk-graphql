@@ -8,8 +8,10 @@ import { readFileSync, writeFileSync } from "fs";
 import { map, endsWith, reduce, toPairs } from "ramda";
 import { paramCase, camelCase } from "change-case";
 import * as dynamo from "./dynamo";
+import * as lambda from "./lambda";
 import { Stack } from "@aws-cdk/core";
 import { GraphQLApi } from "@aws-cdk/aws-appsync";
+import { isRequired } from "./utils";
 
 export const getCodeGenSchema = (options, schemaText) => {
 	const transformers = (options && options.transformers) || [];
@@ -35,17 +37,23 @@ export class AppsyncGQLSchemaStack extends Stack {
 		super(scope, name, props);
 		const schema = props.schemaText || readSchema(props.schemaPath);
 		const codegen = getCodeGenSchema(props, schema);
-		const dynamoProps = dynamo.getDynamoDataSources(props, codegen);
 		const apiName = `${name}-graphql-api`;
 		const api = new GraphQLApi(this, apiName, {
 			name: apiName,
 			schemaDefinition: codegen.schema,
 		});
-		this.dynamoStacks = map(
-			dynamo.createDynamoTableDataSource(this, props, api),
-			dynamoProps,
-		);
-		this.functionStacks = [];
+		this.dynamoStacks = getDynamoStack(this, props, codegen, api);
+		this.functionStacks = getFunctionStack(this, props, codegen, api);
 		this.httpStacks = [];
 	}
 }
+
+export const getDynamoStack = (scope, props, codegen, api) => {
+	const propSet = dynamo.getDynamoDataSources(props, codegen);
+	return map(dynamo.createDynamoTableDataSource(scope, props, api), propSet);
+};
+
+export const getFunctionStack = (scope, props, codegen, api) => {
+	const propSet = lambda.getLambdaDataSources(props, codegen);
+	return map(lambda.createLambdaStack(scope, props, api), propSet);
+};

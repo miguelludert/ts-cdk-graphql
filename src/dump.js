@@ -22,7 +22,7 @@ export const writeJson = (name, obj) =>
 
 export const dump = (options, schemaText) => {
 	const { dumpDir } = options;
-	const defaultDir = `${dumpDir}/defaults`;
+	const defaultDir = `${dumpDir}/default-props`;
 	const dynamoProps = `${dumpDir}/dynamo-props`;
 	const functionProps = `${dumpDir}/function-props`;
 	const dynamoResolvers = `${dumpDir}/dynamo-resolvers`;

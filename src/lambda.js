@@ -12,9 +12,11 @@ import {
 	view,
 	lensPath,
 } from "ramda";
+import { getProps, createBaseResolverProps } from "./utils";
 import { join } from "path";
 import { paramCase, camelCase } from "change-case";
-import { Runtime } from "@aws-cdk/aws-lambda";
+import { Runtime, Function, Code } from "@aws-cdk/aws-lambda";
+import { LambdaDataSource } from "@aws-cdk/aws-appsync";
 
 export const getStack = curry((codegen, name) => {
 	const result = view(
@@ -27,21 +29,19 @@ export const getStack = curry((codegen, name) => {
 export const createLambdaDataSourceProps = curry(
 	(options, codegen, resolverName) => {
 		const { lambdaSrcPath } = options;
-
 		const queryResolverStack = getStack(codegen, resolverName);
 		const fieldName = queryResolverStack.Properties.FieldName;
 		const invokerName = queryResolverStack.DependsOn;
-
 		const dataSourceName = getStack(codegen, invokerName).DependsOn;
-		const lambdaName = paramCase(fieldName);
+		const functionName = paramCase(fieldName);
+		const functionSrcPath = join(lambdaSrcPath, paramCase(functionName));
 		return {
-			dataSourceName: paramCase(dataSourceName),
-			dataSourceProps: {
-				name: camelCase(dataSourceName),
-			},
+			dataSourceName: camelCase(dataSourceName),
+			functionName,
 			functionProps: {
 				handler: "index.handler",
-				functionSrcPath: join(lambdaSrcPath, paramCase(fieldName)),
+				functionSrcPath,
+				functionName,
 			},
 		};
 	},
@@ -80,3 +80,31 @@ export const getLambdaDataSources = (options, codegen) => {
 		resolvers,
 	);
 };
+
+export const createLambdaStack = curry((scope, options, api, stackProps) => {
+	const {
+		dataSourceName,
+		dataSourceProps,
+		functionName,
+		functionProps,
+		resolver,
+	} = stackProps;
+	const thisFunctionProps = getProps("FunctionProps", "", functionProps);
+	const thisResolverProps = createBaseResolverProps(resolver);
+	const lambda = new Function(scope, functionName, {
+		...thisFunctionProps,
+		runtime: Runtime.NODEJS_12_X,
+		code: Code.fromAsset(thisFunctionProps.functionSrcPath),
+	});
+	const dataSource = new LambdaDataSource(scope, dataSourceName, {
+		api,
+		name: dataSourceName,
+		lambdaFunction: lambda,
+	});
+	const thisResolver = dataSource.createResolver(thisResolverProps);
+	return {
+		lambda,
+		//dataSource,
+		//resolver: thisResolver,
+	};
+});

@@ -4,4 +4,5 @@ const { AppsyncGQLSchemaStack } = require("../../.output");
 const app = new cdk.App();
 new AppsyncGQLSchemaStack(app, "AppsyncGQLSchemaStack", {
 	schemaPath: join(__dirname, "schema.gql"),
+	lambdaSrcPath: join(__dirname, "src"),
 });

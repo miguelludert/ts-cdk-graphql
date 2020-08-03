@@ -14,7 +14,7 @@ import { paramCase, camelCase } from "change-case";
 import { Table, AttributeType } from "@aws-cdk/aws-dynamodb";
 import { MappingTemplate, BaseResolverProps } from "@aws-cdk/aws-appsync";
 import * as self from "./dynamo";
-import { getProps } from "./utils";
+import { getProps, createBaseResolverProps } from "./utils";
 
 export const writeFile = (path, content) => {
 	writeFileSync(path, content, "utf8");
@@ -102,17 +102,6 @@ export const createDynamoResolverProps = curry((key, stackName, codegen) => {
 	};
 });
 
-export const createDynamoBaseResolverProps = resolverProp => ({
-	typeName: resolverProp.typeName,
-	fieldName: resolverProp.fieldName,
-	requestMappingTemplate: MappingTemplate.fromString(
-		resolverProp.requestMappingTemplate,
-	),
-	responseMappingTemplate: MappingTemplate.fromString(
-		resolverProp.responseMappingTemplate,
-	),
-});
-
 export const createDynamoTableDataSource = curry(
 	(scope, options, api, dynamoParams) => {
 		const {
@@ -142,9 +131,7 @@ export const createDynamoTableDataSource = curry(
 		}
 		const resolvers = resolverProps.map(resolverProp => {
 			const modifiedProp = { resolverProp };
-			return dataSource.createResolver(
-				createDynamoBaseResolverProps(resolverProp),
-			);
+			return dataSource.createResolver(createBaseResolverProps(resolverProp));
 		});
 		return {
 			table,

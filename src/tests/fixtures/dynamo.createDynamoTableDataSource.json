@@ -7,6 +7,7 @@
 		"dataSourceName": "blogPostTable",
 		"description": "A dynamo table datasource for BlogPost",
 		"tableProps": {
+			"retainPolicy": "DESTROY",
 			"tableName": "oscar-meyer",
 			"partitionKey": {},
 			"sortKey": {}

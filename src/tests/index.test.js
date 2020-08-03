@@ -28,4 +28,14 @@ describe("Index", () => {
 			});
 		});
 	});
+	describe("getDynamoStack", () => {
+		it("should", () => {
+			throw "not implemented";
+		});
+	});
+	describe("getFunctionStack", () => {
+		it("should", () => {
+			throw "not implemented";
+		});
+	});
 });
