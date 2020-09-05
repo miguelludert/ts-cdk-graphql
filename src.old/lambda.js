@@ -90,7 +90,6 @@ export const createLambdaStack = curry((scope, options, api, stackProps) => {
 		resolver,
 	} = stackProps;
 	const thisFunctionProps = getProps("FunctionProps", "", functionProps);
-	const thisResolverProps = createBaseResolverProps(resolver);
 	const lambda = new Function(scope, functionName, {
 		...thisFunctionProps,
 		runtime: Runtime.NODEJS_12_X,
@@ -101,7 +100,9 @@ export const createLambdaStack = curry((scope, options, api, stackProps) => {
 		name: dataSourceName,
 		lambdaFunction: lambda,
 	});
+	const thisResolverProps = createBaseResolverProps(resolver);
 	const thisResolver = dataSource.createResolver(thisResolverProps);
+	console.info(thisResolverProps);
 	return {
 		lambda,
 		//dataSource,
