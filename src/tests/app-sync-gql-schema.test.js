@@ -59,13 +59,22 @@ describe("app-syng-gql-schema-stack", () => {
 			const scope = "scope";
 			const cfSchema = "cfSchema";
 			const props = "props";
+			const api = "api";
 			const providers = [
-				{ createResources: jest.fn().mockReturnValue({ value: [1] }) },
-				{ createResources: jest.fn().mockReturnValue({ value: [2] }) },
-				{ createResources: jest.fn().mockReturnValue({ value: [3] }) },
+				{ createResources: jest.fn().mockReturnValue({ stacks: { one: 1 } }) },
+				{ createResources: jest.fn().mockReturnValue({ stacks: { two: 2 } }) },
+				{
+					createResources: jest.fn().mockReturnValue({ stacks: { three: 3 } }),
+				},
 			];
-			const expected = { value: [1, 2, 3] };
-			const actual = createResources(scope, props, providers, cfSchema);
+			const expected = {
+				stacks: {
+					one: 1,
+					two: 2,
+					three: 3,
+				},
+			};
+			const actual = createResources(scope, props, api, providers, cfSchema);
 			expect(actual).toEqual(expected);
 		});
 	});

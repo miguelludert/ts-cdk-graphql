@@ -6,6 +6,8 @@ import {
 	I_ConstructMap,
 	I_AppSyncGqlSchemaProps,
 } from "../interfaces";
+import { createResources } from "./lambda-create-resources";
+import { cast } from "../typescript-utils";
 
 // data sources must be in typescript
 export class LambdaDatasourceProvider implements I_DatasourceProvider {
@@ -17,7 +19,7 @@ export class LambdaDatasourceProvider implements I_DatasourceProvider {
 		props: I_AppSyncGqlSchemaProps,
 		cfSchema: any,
 	): I_ConstructMap {
-		return {} as I_ConstructMap;
+		return cast<I_ConstructMap>(createResources(scope, props, cfSchema));
 	}
 }
 //

@@ -1,7 +1,8 @@
 import { Construct } from "@aws-cdk/core";
+import { GraphQLApi } from "@aws-cdk/aws-appsync";
 import { ITransformer } from "graphql-transformer-core";
 
-export interface I_ConstructSetupFunctionsProps {
+export interface I_ConstructSetupProps {
 	[key: string]: {
 		onProps?: (scope: Construct, props: any, context: any) => any;
 		onConstruct?: (scope: Construct, props: any, context: any) => any;
@@ -21,6 +22,7 @@ export interface I_DatasourceProvider {
 	createResources: (
 		scope: Construct,
 		props: I_AppSyncGqlSchemaProps,
+		api: GraphQLApi,
 		cfSchema: any,
 	) => I_ConstructMap;
 }
@@ -39,7 +41,7 @@ export interface I_AppSyncGqlSchemaProps {
 	schemaText?: string;
 	defaultsDirectory?: string;
 	overridesDirectory?: string;
-	defaults?: I_ConstructSetupFunctionsProps;
-	overrides?: I_ConstructSetupFunctionsProps;
+	defaults?: I_ConstructSetupProps;
+	overrides?: I_ConstructSetupProps;
 	datasourceProviders?: I_DatasourceProvider[];
 }
