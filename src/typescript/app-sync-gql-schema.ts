@@ -3,8 +3,8 @@ import { GraphQLApi, GraphQLApiProps } from "@aws-cdk/aws-appsync";
 import { GraphQLTransform } from "graphql-transformer-core";
 import { readFileSync } from "fs";
 import { I_AppSyncGqlSchemaProps, I_DatasourceProvider } from "./interfaces";
-import { NO_SCHEMA_ERROR_MESSAGE } from "./constants";
-import { datasourceProviders } from "./datasource-providers";
+import { NO_SCHEMA_ERROR_MESSAGE } from "../constants";
+import { datasourceProviders } from "../datasource-providers";
 import deepmerge from "deepmerge";
 import { getProps } from "./typescript-utils";
 
@@ -72,6 +72,9 @@ export const createApi = (
 	props: I_AppSyncGqlSchemaProps,
 	cfSchema: object,
 ): GraphQLApi => {
-	const gqlApiProps = getProps<GraphQLApiProps>();
-	return new GraphQLApi(scope);
+	// const gqlApiProps = getProps<GraphQLApiProps>();
+	// return new GraphQLApi(scope, 'no-name', {
+
+	// });
+	throw new Error("not implemented");
 };

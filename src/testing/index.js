@@ -1,3 +1,8 @@
+import  testSchema from './test-schema.json';
+
+
+export const dump = (obj) => console.info(JSON.stringify(obj, null, 2));
+
 // this is an experimental function to enable mocking within the same file as the invoked function
 export const prepModule = name => {
 	jest.mock(name);
@@ -11,3 +16,6 @@ export const prepModule = name => {
 		underTest,
 	};
 };
+
+export { testSchema };
+ 

@@ -8,9 +8,9 @@ import {
 	I_DatasourceProvider,
 	I_ConstructMap,
 	I_AppSyncGqlSchemaProps,
-} from "../interfaces";
-import { createResources } from "./dynamo-create-resources";
-import { cast } from "../typescript-utils";
+} from "./interfaces";
+import { createResources } from "../datasource-providers/dynamo";
+import { cast } from "./typescript-utils";
 
 // data sources must be in typescript
 export class DynamoDatasourceProvider implements I_DatasourceProvider {

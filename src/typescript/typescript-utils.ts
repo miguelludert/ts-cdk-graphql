@@ -1,5 +1,5 @@
 import { I_AppSyncGqlSchemaProps, I_DatasourceProvider } from "./interfaces";
-import { getProps } from "./datasource-providers/datasource-utils";
+import { getProps } from "./datasource-providers/utils";
 
 export function cast<T>(obj: unknown): T {
 	return obj as T;
