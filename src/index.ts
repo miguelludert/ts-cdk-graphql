@@ -1,3 +1,3 @@
 // everything exposed from here must be in typescript
-export { AppSyncGqlSchema } from "./app-sync-gql-schema";
-export * from "./interfaces";
+export { AppSyncGqlSchema } from "./typescript/app-sync-gql-schema";
+export * from "./typescript/interfaces";

@@ -78,3 +78,27 @@ export const getIndex = defaultTo({}, (name, attributeDefinitions, indexes) => {
 		};
 	}
 });
+
+export const createDynamoResolverProps = curry((key, stackName, codegen) => {
+	const reducer = (acc, [key, value]) => {
+		const fieldName = value.Properties.FieldName;
+		const typeName = value.Properties.TypeName;
+		const accKey = `${typeName}.${fieldName}`;
+		acc[`${accKey}`] = {
+			typeName,
+			fieldName,
+			requestMappingTemplate: codegen.resolvers[`${accKey}.req.vtl`],
+			responseMappingTemplate: codegen.resolvers[`${accKey}.res.vtl`],
+		};
+		return acc;
+	};
+	const resolverProps = pipe(
+		toPairs,
+		filter(([key, value]) => value.Type == "AWS::AppSync::Resolver"),
+		reduce(reducer, {}),
+		values,
+	)(codegen.stacks[stackName].Resources);
+	return {
+		resolverProps,
+	};
+});

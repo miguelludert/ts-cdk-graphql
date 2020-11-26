@@ -1,13 +1,23 @@
 import { AWS_APPSYNC_DATASOURCE } from "../constants";
 import { join } from "path";
+import { toPairs, } from 'ramda';
 
-export const findStack = (cfnSchema, stackName) => {
-	return cfnSchema.stacks[stackName];
+export const findStack = (cfSchema, stackName) => {
+	return cfSchema.stacks[stackName];
 };
 
 export const filterResourcePairsByType = (resourcePairs, type) => {
 	return resourcePairs.filter(([, resource]) => resource.Type === type);
 };
+
+export const gatherStacks = (cfSchema) => { 
+	return toPairs(cfSchema.stackMapping).reduce((acc, [name,stackName]) => { 
+		if(!acc[stackName]) { 
+			acc[stackName] = {};
+		}
+		acc[stackName][name] = cfSchema.stacks[name];
+	}, {});
+}
 
 export const createConstruct = (scope, props, constructType, resourceName) => {
 	const { onProps, onConstruct } = gatherConstructSetups(

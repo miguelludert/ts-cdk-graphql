@@ -9,8 +9,8 @@ import {
 	I_ConstructMap,
 	I_AppSyncGqlSchemaProps,
 } from "./interfaces";
-import { createResources } from "../datasource-providers/dynamo";
-import { cast } from "./typescript-utils";
+import { createResources } from "../providers/dynamo";
+import { cast } from "./utils";
 
 // data sources must be in typescript
 export class DynamoDatasourceProvider implements I_DatasourceProvider {
@@ -30,3 +30,4 @@ export class DynamoDatasourceProvider implements I_DatasourceProvider {
 		return cast<I_ConstructMap>(createResources(scope, props, cfSchema));
 	}
 }
+

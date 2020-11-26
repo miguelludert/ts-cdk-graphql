@@ -12,5 +12,9 @@ module.exports = {
 		"ts-jest": {
 			diagnostics: false,
 		},
+		dump: (...vals) => {
+			const messages = vals.map((val) => "* " + JSON.stringify(val));
+			console.info(messages.join("\n"));
+		},
 	},
 };

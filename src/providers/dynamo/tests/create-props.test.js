@@ -33,7 +33,7 @@ describe("Dynamo Create Props", () => {
 			expect(actual).toEqual(expected);
 		});
 	});
-	describe.only("createDynamoTableProps", () => {
+	describe("createDynamoTableProps", () => {
 		it("should create ", () => {
 			const expected = {
 				Blog: ["mock Blog"],
