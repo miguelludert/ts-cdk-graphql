@@ -1,5 +1,5 @@
 {
-	"app": "npm run build:src && node ./index.js",
+	"app": "npm run build:cdk && node ./index.js",
 	"context": {
 		"@aws-cdk/core:enableStackNameDuplicates": "true",
 		"aws-cdk:enableDiffNoFail": "true"

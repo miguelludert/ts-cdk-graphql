@@ -17,12 +17,11 @@ type Comment
 	body: String!
 	publishDate: Int!
 }
-
 type TagCloud {
 	size: Int!
 	tag: String!
 }
 
-type Query {
-	helloWorld(blogId: String!): String @function(name: "${env}-hello-world")
-}
+# type Query {
+# 	helloWorld(blogId: String!): String @function(name: "${env}-hello-world")
+# }
