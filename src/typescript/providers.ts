@@ -4,22 +4,23 @@ import { ModelConnectionTransformer } from "graphql-connection-transformer";
 import { ModelAuthTransformer } from "graphql-auth-transformer";
 import { KeyTransformer } from "graphql-key-transformer";
 import { ITransformer } from "graphql-transformer-core";
+
 import {
 	I_DatasourceProvider,
 	I_ConstructMap,
 	I_AppSyncGqlSchemaProps,
 } from "./interfaces";
-import { createResources } from "../providers/dynamo";
+import { createDynamoResources } from "../providers/dynamo";
 import { cast } from "./utils";
 
 // data sources must be in typescript
 export class DynamoDatasourceProvider implements I_DatasourceProvider {
 	getTransformer(): ITransformer[] {
 		return [
-			new ModelAuthTransformer(),
-			new KeyTransformer(),
+			// the order of transformers matters
 			new ModelConnectionTransformer(),
 			new DynamoDBModelTransformer(),
+			new KeyTransformer(),
 		];
 	}
 	createResources(
@@ -27,7 +28,7 @@ export class DynamoDatasourceProvider implements I_DatasourceProvider {
 		props: I_AppSyncGqlSchemaProps,
 		cfSchema: any,
 	): I_ConstructMap {
-		return cast<I_ConstructMap>(createResources(scope, props, cfSchema));
+		return cast<I_ConstructMap>(createDynamoResources(scope, props, cfSchema));
 	}
 }
 

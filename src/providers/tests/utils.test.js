@@ -1,15 +1,26 @@
 import testSchema from "../../testing";
-import {
-	filterDataSourcesOfType,
-	requireConstructSetup,
-	gatherConstructSetups,
-} from "../datasource-utils";
 import { AMAZON_DYNAMODB } from "../../constants";
 import graphQLApiConstructSetup from "../../defaults/GraphQLApi";
 import { GraphQLApi } from "@aws-cdk/aws-appsync";
 import { join } from "path";
+import { hasUncaughtExceptionCaptureCallback } from "process";
 
-describe("datasource-utils", () => {
+// this is an experimental function to enable mocking within the same file as the invoked function
+export const prepModule = (name) => {
+	jest.mock(name);
+	const mock = jest.requireMock(name);
+	const underTest = jest.requireActual(name);
+	beforeEach(() => {
+		jest.resetAllMocks();
+	});
+	return {
+		mock,
+		underTest,
+	};
+};
+
+describe("utils", () => {
+	const { mock, underTest} = prepModule("../utils");
 	describe.skip("filterDataSourcesOfType", () => {
 		it("should find all stacks with datasources of a specified type (dynamo)", () => {
 			const actual = filterDataSourcesOfType(testSchema, AMAZON_DYNAMODB);
@@ -27,7 +38,7 @@ describe("datasource-utils", () => {
 				onConstruct: jest.fn(),
 			};
 			jest.doMock(path, () => setup, { virtual: true });
-			const actual = requireConstructSetup(path);
+			const actual = underTest.requireConstructSetup(path);
 			expect(actual).toEqual(setup);
 		});
 	});
@@ -84,12 +95,66 @@ describe("datasource-utils", () => {
 					"onConstruct injected override",
 				],
 			};
-			const actual = gatherConstructSetups(props, Dummy, stackName);
+			const actual = underTest.gatherConstructSetups(props, Dummy, stackName);
 			expect(actual).toEqual(expected);
 		});
 	});
 
-	describe("no implemented", () => {
-		throw "no implemented";
+	describe("invokeOnProps", () => {
+		it("should invoke a set of prop callbacks", () => {
+			const scope = "scope";
+			const context = "context";
+			const initialState = {};
+			const secondState = {
+				state : 2
+			};
+			const thirdState = {
+				state : 3
+			};
+			const onProps = [
+				jest.fn().mockReturnValue(initialState),
+				jest.fn().mockReturnValue(secondState),
+				jest.fn().mockReturnValue(thirdState),
+			];
+			const actual = underTest.invokeOnProps(scope, onProps, context);
+			expect(onProps[0]).toHaveBeenCalledWith(scope, null, context);
+			expect(onProps[1]).toHaveBeenCalledWith(scope, initialState, context);
+			expect(onProps[2]).toHaveBeenCalledWith(scope, secondState, context);
+			expect(actual).toEqual(thirdState);
+		});
+	});
+
+	describe("invokeOnConstruct", () => {
+		it("should invoke a set of construct callbacks", () => {
+			const scope = "scope";
+			const context = "context";
+			const construct = "construct";
+			const onConstruct = [jest.fn(), jest.fn(), jest.fn()];
+			underTest.invokeOnConstruct(scope, construct, onConstruct, context);
+			throw "not implemented";
+		});
+	});
+
+	describe.only("createConstruct", () => {
+		it("should instantiate a construct", () => {
+			const Dummy = jest.fn();
+			const type = Dummy;
+			const scope = "scope";
+			const context = {};
+			const props = "props";
+			const resourceName = "resource-name";
+			const onProps = "on props"; 
+			const onConstruct = "on construct";
+			const onPropsResult = "on props result";
+			mock.gatherConstructSetups.mockReturnValue({
+				onProps, onConstruct
+			});
+			mock.invokeOnProps.mockReturnValue(onPropsResult);
+			const actual = underTest.createConstruct(scope, props, type, resourceName);
+			expect(mock.gatherConstructSetups).toHaveBeenCalledWith(props, type, resourceName);
+			expect(Dummy).toHaveBeenCalledWith(scope, resourceName, onPropsResult);
+			expect(mock.invokeOnConstruct).toHaveBeenCalledWith(scope, expect.any(Dummy), onConstruct, context);
+			expect(actual).toEqual(expect.any(Dummy));
+		});
 	});
 });

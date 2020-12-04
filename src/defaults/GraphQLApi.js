@@ -1,4 +1,8 @@
 export default {
-	onProps: () => {},
+	onProps: (scope, props, context) => {
+		return {
+			name : context.resourceName
+		};
+	},
 	onConstruct: () => {},
 };

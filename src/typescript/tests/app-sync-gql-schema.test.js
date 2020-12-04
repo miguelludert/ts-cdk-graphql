@@ -1,5 +1,5 @@
 import { GraphQLApi } from "@aws-cdk/aws-appsync";
-import { App } from "@aws-cdk/core";
+import { App, Construct } from "@aws-cdk/core";
 import { NO_SCHEMA_ERROR_MESSAGE } from "../../constants";
 import { I_DatasourceProvider } from "../interfaces";
 
@@ -147,4 +147,33 @@ describe("app-syng-gql-schema-stack", () => {
 			);
 		});
 	});
+
+	describe("AppSyncGqlSchema", () => {
+		it("should create a new construct", ()=> { 
+			const props = {
+				environment: {
+					ENV_VAR : "env var"
+				},
+				context: "context",
+				prefix: "prefix",
+				schemaFile: "schemaFile",
+				schemaText: "schemaText",
+				defaultsDirectory: "string",
+				overridesDirectory: "string",
+				defaults: "defaults",
+				overrides: "overrides",
+				datasourceProviders: "datasourceProviders"
+			};
+			const scope = new App({});
+			const name = "providers";
+			const providers = "providers";
+			const cfSchema = "cfSchema";
+
+			mock.getProviders.mockReturnValue(providers);
+			mock.getCfSchema.mockReturnValue(cfSchema);
+			const actual = new underTest.AppSyncGqlSchema(scope, name, props);
+			expect(mock.getProviders).toHaveBeenCalledWith(props);
+			expect(mock.getCfSchema).toHaveBeenCalledWith(props, providers);
+		})
+	})
 });

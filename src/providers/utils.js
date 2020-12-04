@@ -1,6 +1,7 @@
-import { AWS_APPSYNC_DATASOURCE } from "../constants";
+import { INVOKE_ON_PROPS_ERROR_MESSAGE } from "../constants";
 import { join } from "path";
-import { toPairs, } from 'ramda';
+import { toPairs } from "ramda";
+import * as self from './utils';
 
 export const findStack = (cfSchema, stackName) => {
 	return cfSchema.stacks[stackName];
@@ -10,24 +11,34 @@ export const filterResourcePairsByType = (resourcePairs, type) => {
 	return resourcePairs.filter(([, resource]) => resource.Type === type);
 };
 
-export const gatherStacks = (cfSchema) => { 
-	return toPairs(cfSchema.stackMapping).reduce((acc, [name,stackName]) => { 
-		if(!acc[stackName]) { 
+export const gatherStacks = (cfSchema) => {
+	return toPairs(cfSchema.stackMapping).reduce((acc, [name, stackName]) => {
+		if (!acc[stackName]) {
 			acc[stackName] = {};
 		}
 		acc[stackName][name] = cfSchema.stacks[name];
 	}, {});
-}
+};
 
 export const createConstruct = (scope, props, constructType, resourceName) => {
-	const { onProps, onConstruct } = gatherConstructSetups(
+
+	console.info(11);
+
+	const { onProps, onConstruct } = self.gatherConstructSetups(
 		props,
 		constructType,
 		resourceName,
 	);
-	const constructProps = invokeOnProps(scope, context, onProps);
+	const context = {
+		resourceName
+	}; // not used, for now
+	console.info(22);
+	const constructProps = self.invokeOnProps(scope, onProps, context);
+	console.info(33, scope, resourceName, constructProps);
 	const construct = new constructType(scope, resourceName, constructProps);
-	invokeSetupChain(scope, construct, context, onConstruct);
+	console.info(4);
+	self.invokeOnConstruct(scope, construct, onConstruct, context);
+	console.info(5);
 	return construct;
 };
 
@@ -48,7 +59,7 @@ export function gatherConstructSetups(props, type, resourceName) {
 	const addSetupFile = (condition, ...paths) => {
 		if (condition) {
 			const path = join(...paths);
-			const setup = requireConstructSetup(path);
+			const setup = self.requireConstructSetup(path);
 			if (setup) {
 				setups.push(setup);
 			}
@@ -90,17 +101,24 @@ export function gatherConstructSetups(props, type, resourceName) {
 	);
 }
 
-export function invokeOnProps(scope, context, onProps) {
-	let state;
+export function invokeOnProps(scope, onProps, context) {
+	console.info(111, onProps[0]);
+	let props = null;
 	onProps.forEach((callback) => {
-		state = callback(scope, state, context);
-		if (!state) {
-			throw constants.INVOKE_ON_PROPS_ERROR_MESSAGE;
+		console.info(222);
+		props = callback(scope, props, context);
+		console.info(333);
+		if (!props) {
+			throw INVOKE_ON_PROPS_ERROR_MESSAGE;
 		}
+		console.info(444);
 	});
+
+	console.info(555);
+	return props;
 }
 
-export function invokeOnConstruct(scope, construct, context, onConstruct) {
+export function invokeOnConstruct(scope, construct, onConstruct, context) {
 	onConstruct.forEach((callback) => {
 		callback(scope, construct, context);
 	});

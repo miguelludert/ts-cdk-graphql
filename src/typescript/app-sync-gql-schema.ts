@@ -1,5 +1,6 @@
 import { Construct } from "@aws-cdk/core";
-import { GraphQLApi, GraphQLApiProps } from "@aws-cdk/aws-appsync";
+import { NestedStack } from "@aws-cdk/aws-cloudformation";
+import { GraphqlApi, GraphqlApiProps, Schema } from "@aws-cdk/aws-appsync";
 import { GraphQLTransform } from "graphql-transformer-core";
 import { I_AppSyncGqlSchemaProps, I_DatasourceProvider } from "./interfaces";
 import { NO_SCHEMA_ERROR_MESSAGE } from "../constants";
@@ -13,12 +14,14 @@ export const defaultDatasourceProviders : I_DatasourceProvider[] = [
 	//cast<I_DatasourceProvider>(LambdaDatasourceProvider),
 ];
 
-export class AppSyncGqlSchema extends Construct {
-	constructor(scope: Construct, name: string, props: I_AppSyncGqlSchemaProps) {
+export class AppSyncGqlSchema extends NestedStack {
+	constructor(scope : Construct, name: string, props: I_AppSyncGqlSchemaProps) {
 		super(scope, name);
-		// const providers = getProviders(props);
-		// const cfSchema = getCfSchema(props, providers);
-		// const api = createApi(this, props, cfSchema);
+
+
+		const providers = self.getProviders(props);
+		const cfSchema = self.getCfSchema(props, providers);
+		const api = self.createApi(scope, "asdfasd");
 		// const datasources = createResources(this, props, api, providers, cfSchema);
 		// Object.assign(this, datasources);
 	}
@@ -46,7 +49,7 @@ export const getSchemaText = (props: I_AppSyncGqlSchemaProps): string => {
 export const createResources = (
 	scope: Construct,
 	props: I_AppSyncGqlSchemaProps,
-	api: GraphQLApi,
+	api: GraphqlApi,
 	providers: I_DatasourceProvider[],
 	cfSchema: object,
 ) => {
@@ -75,11 +78,11 @@ export const getCfSchema = (
 export const createApi = (
 	scope: Construct,
 	schema: string,
-): GraphQLApi => {
+): GraphqlApi => {
 	const props = {
 		name : 'graphql-api',
-		schema
+		//schema ne
 	};
-	const result = createConstruct<GraphQLApi, GraphQLApiProps>(scope, props, GraphQLApi, 'graphql-api')
+	const result = createConstruct<GraphqlApi, GraphqlApiProps>(scope, props, GraphqlApi, 'graphql-api');
 	return result;
 };
