@@ -21,9 +21,6 @@ export const gatherStacks = (cfSchema) => {
 };
 
 export const createConstruct = (scope, props, constructType, resourceName) => {
-
-	console.info(11);
-
 	const { onProps, onConstruct } = self.gatherConstructSetups(
 		props,
 		constructType,
@@ -31,14 +28,10 @@ export const createConstruct = (scope, props, constructType, resourceName) => {
 	);
 	const context = {
 		resourceName
-	}; // not used, for now
-	console.info(22);
+	}; 
 	const constructProps = self.invokeOnProps(scope, onProps, context);
-	console.info(33, scope, resourceName, constructProps);
 	const construct = new constructType(scope, resourceName, constructProps);
-	console.info(4);
 	self.invokeOnConstruct(scope, construct, onConstruct, context);
-	console.info(5);
 	return construct;
 };
 
@@ -102,19 +95,13 @@ export function gatherConstructSetups(props, type, resourceName) {
 }
 
 export function invokeOnProps(scope, onProps, context) {
-	console.info(111, onProps[0]);
 	let props = null;
 	onProps.forEach((callback) => {
-		console.info(222);
 		props = callback(scope, props, context);
-		console.info(333);
 		if (!props) {
 			throw INVOKE_ON_PROPS_ERROR_MESSAGE;
 		}
-		console.info(444);
 	});
-
-	console.info(555);
 	return props;
 }
 
