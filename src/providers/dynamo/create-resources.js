@@ -3,37 +3,36 @@ import {
 	createDynamoTableProps,
 } from "./create-props";
 import { toPairs, fromPairs } from "ramda";
+import { Table } from "@aws-cdk/aws-dynamodb";
 
-export const createDynamoTableDataSource = (scope, options, api, tableProps, resolverProps) => {
-		// const {
-		// 	resolverProps,
-		// 	dataSourceName,
-		// 	description,
-		// 	dataSourceProps,
-		// 	tableProps,
-		// } = dynamoParams;
-		const { prefix } = options || {};
-		const actualTableProps = getProps(
-			"TableProps",
-			"blog-table.tableProps",
+export const createDynamoDataSource = (scope, api, props) => {
+	console.info(props)
+		const {
+			resolverProps,
+			dataSourceName,
 			tableProps,
-		);
-		const table = new Table(scope, dataSourceName, actualTableProps);
+		} = props;
+		const table = new Table(scope, tableProps.tableName, tableProps);
 		const dataSource = api.addDynamoDbDataSource(
 			dataSourceName,
-			description,
 			table,
+			{
+				description : dataSourceName,
+				name : dataSourceName
+			}
 		);
-		if (dynamoParams.GSI) {
-			dynamoParams.GSI.map((index) => table.addGlobalSecondaryIndex(index));
+		if (props.GSI) {
+			props.GSI.map((index) => table.addGlobalSecondaryIndex(index));
 		}
-		if (dynamoParams.LSI) {
-			dynamoParams.LSI.map((index) => table.addLocalSecondaryIndex(index));
+		if (props.LSI) {
+			props.LSI.map((index) => table.addLocalSecondaryIndex(index));
 		}
-		const resolvers = resolverProps.map((resolverProp) => {
-			const modifiedProp = { resolverProp };
-			return dataSource.createResolver(createBaseResolverProps(resolverProp));
-		});
+		console.info(1);
+		// const resolvers = resolverProps.map((resolverProp) => {
+		// 	const modifiedProp = { resolverProp };
+		// 	return dataSource.createResolver(createBaseResolverProps(resolverProp));
+		// });
+		console.info(2);
 		return {
 			table,
 			dataSource,
@@ -41,13 +40,3 @@ export const createDynamoTableDataSource = (scope, options, api, tableProps, res
 		};
 	};
 
-export const getDynamoDataSources = (options, codeGen) => {
-	const stacks = toPairs(codeGen.stacks);
-	const tables = stackMapping.filter(([key,value]) => {
-		return value.Type === RESOURCE_TYPE_DATASOURCE && value.Properties.Type === DATASOURCE_TYPE_DYNAMO;
-	});
-	return tables.map(([key, value]) => ({
-		...createDynamoTableProps(key, stackName, codeGen),
-		...createDynamoResolverProps(key, stackName, codeGen),
-	}));
-};

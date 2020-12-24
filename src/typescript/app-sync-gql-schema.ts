@@ -26,7 +26,7 @@ export class AppSyncGqlSchema extends NestedStack {
 		const providers = self.getProviders(props);
 		const cfSchema = self.getCfSchema(props, providers);
 		const api = self.createApi(scope, cfSchema.schema);
-		// const datasources = createResources(this, props, api, providers, cfSchema);
+		const datasources = createResources(this, props, api, providers, cfSchema);
 		// Object.assign(this, datasources);
 	}
 }
@@ -75,7 +75,6 @@ export const getCfSchema = (
 		transformers,
 	});
 	const cfSchema = gqlTransform.transform(schemaText);
-	console.info(cfSchema);
 	return cfSchema;
 };
 

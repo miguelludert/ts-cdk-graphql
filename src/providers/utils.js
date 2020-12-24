@@ -110,3 +110,15 @@ export function invokeOnConstruct(scope, construct, onConstruct, context) {
 		callback(scope, construct, context);
 	});
 }
+
+
+
+export const dump = (...obj) =>
+	console.info(obj.map(`*\t${JSON.stringify(obj, null, 2)}\n`).join('\n'));
+global.dump = dump;
+export const dataSourceName = (args) => args;
+export const resolverName = (args) => args;
+export const tableName = (args) => args;
+export const functionName = (args) => args;
+export const graphqlApiName = (args) => args;
+export const stackName = (args) => args;

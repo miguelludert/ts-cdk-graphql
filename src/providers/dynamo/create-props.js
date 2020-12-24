@@ -6,19 +6,40 @@ import { filterResourcePairsByType } from "../utils";
 import { RESOURCE_TYPE_DYNAMO } from "../../constants";
 import * as self from "./create-props";
 
+// export const getDynamoDataSources = (options, cfnSchema) => {
+// 	console.info("getDynamoDataSources");
+// 	const stacks = toPairs(codeGen.stacks);
+// 	const tables = stackMapping.filter(([key,value]) => {
+// 		return value.Type === RESOURCE_TYPE_DATASOURCE && value.Properties.Type === DATASOURCE_TYPE_DYNAMO;
+// 	});
+// 	return tables.map(([key, value]) => ({
+// 		...createDynamoTableProps(key, stackName, cfnSchema),
+// 		...createDynamoResolverProps(key, stackName, cfnSchema),
+// 	}));
+// };
+
 export const createDynamoTableProps = (cfnSchema) => {
 	// get dynamo resources by stack
-	return Object.entries(cfnSchema.stacks).reduce((acc, [name, stack]) => {
+	const result = Object.entries(cfnSchema.stacks).reduce((acc, [stackName, stack]) => {
+
+
         const resourcePairs = Object.entries(stack.Resources);
-        const resources = filterResourcePairsByType(resourcePairs, RESOURCE_TYPE_DYNAMO);
+		const resources = filterResourcePairsByType(resourcePairs, RESOURCE_TYPE_DYNAMO);
 		if (resources.length) {
-			acc[name] = resources.map(self.createSingleDynamoTableProp(name));
+			acc[stackName] = resources.map(self.createSingleDynamoTableProp(stackName));
 		}
+
+
+		dump("ACC", acc);
 		return acc;
+
+
 	}, {});
+	dump("RESULT", result);
+	return result;
 };
 
-export const createSingleDynamoTableProp = curry((name, resource) => {
+export const createSingleDynamoTableProp = curry((stackName, [resourceName,resource]) => {
 	if (resource.Type != RESOURCE_TYPE_DYNAMO) {
 		throw new Error(`Resource type does not match ${RESOURCE_TYPE_DYNAMO}`);
 	}
@@ -30,9 +51,9 @@ export const createSingleDynamoTableProp = curry((name, resource) => {
 		GlobalSecondaryIndexes,
 	} = resource.Properties;
 	const props = {
-		dataSourceName: `${camelCase(name)}`,
+		dataSourceName: `${camelCase(resourceName)}`,
 		tableProps: {
-			tableName: `${paramCase(name)}`,
+			tableName: `${paramCase(resourceName)}`,
 			...getDynamoAttributeProps(KeySchema, AttributeDefinitions),
 			removalPolicy: DeletionPolicy,
 		},
