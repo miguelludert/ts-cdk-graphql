@@ -1,8 +1,9 @@
 import { INVOKE_ON_PROPS_ERROR_MESSAGE } from "../constants";
 import { join } from "path";
 import { curry, toPairs } from "ramda";
-import * as self from './utils';
-import { pascalCase } from 'change-case';
+import * as self from "./utils";
+import { pascalCase } from "change-case";
+import { RESOURCE_TYPE_DATASOURCE } from '../constants';
 
 export const findStack = (cfSchema, stackName) => {
 	return cfSchema.stacks[stackName];
@@ -28,8 +29,8 @@ export const createConstruct = (scope, props, constructType, resourceName) => {
 		resourceName,
 	);
 	const context = {
-		resourceName
-	}; 
+		resourceName,
+	};
 	const constructProps = self.invokeOnProps(scope, onProps, context);
 	const construct = new constructType(scope, resourceName, constructProps);
 	self.invokeOnConstruct(scope, construct, onConstruct, context);
@@ -112,21 +113,54 @@ export function invokeOnConstruct(scope, construct, onConstruct, context) {
 	});
 }
 
+export const createDatasourceProps = curry((propsCallback, datasourceType, cfnSchema) => {
+	// get dynamo resources by stack
+	console.info(0)
+	const result = Object.entries(cfnSchema.stacks).reduce(
+		(acc, [stackName, stackCfn]) => {
+			const resourcePairs = Object.entries(stackCfn.Resources);
+			const datasourcePairs = resourcePairs.find(
+				([resourceName, resourceCfn]) => {
+					const isDatasource = resourceCfn.Type === RESOURCE_TYPE_DATASOURCE;
+					const isDynamo = resourceCfn.Properties.Type === datasourceType;//"AMAZON_DYNAMODB";
+					return isDatasource && isDynamo;
+				},
+			);
+			if (datasourcePairs) {
+				const [ datasourceName, datasourceCfn ] = datasourcePairs;
+				const props = propsCallback({
+					stackName,
+					resourcePairs,
+					datasourceName,
+					datasourceCfn,
+				});
+				acc.push(props);
+			}
+			return acc;
+		},
+		[],
+	);
+	return result;
+});
+
 export const dump = (...args) => {
 	const dumpJson = (o) => {
 		let result;
 		try {
 			result = JSON.stringify(o, null, 2);
-		} catch(e) {
+		} catch (e) {
 			result = o;
 		}
 		return `*\t${result}`;
 	};
-	const toConsole = args.map(dumpJson).join('\n');
+	const toConsole = args.map(dumpJson).join("\n");
 	console.info(toConsole);
-}
-export const addSuffix = curry((suffix,str) => str.endsWith(suffix) ? str : `${str}${suffix}`);
-export const makeDatasourceName = (name) => addSuffix("Source", pascalCase(name));
+};
+export const addSuffix = curry((suffix, str) =>
+	str.endsWith(suffix) ? str : `${str}${suffix}`,
+);
+export const makeDatasourceName = (name) =>
+	addSuffix("Source", pascalCase(name));
 export const makeResolverName = addSuffix("-resolver");
 export const makeTableName = addSuffix("-table");
 export const makeFunctionName = addSuffix("-func");

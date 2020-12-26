@@ -11,7 +11,7 @@ import {
 	I_ConstructMap,
 	I_AppSyncGqlSchemaProps,
 } from "./interfaces";
-import { createDynamoResources } from "../providers/dynamo";
+import { createDynamoDataSource } from "../providers/dynamo";
 import { cast } from "./utils";
 import { dump } from "../providers/utils";
 
@@ -31,7 +31,7 @@ export class DynamoDatasourceProvider implements I_DatasourceProvider {
 		api: GraphqlApi,
 		cfSchema: any,
 	): I_ConstructMap {
-		return cast<I_ConstructMap>(createDynamoResources(scope, api, cfSchema));
+		return cast<I_ConstructMap>(createDynamoDataSource(scope, api, cfSchema));
 	}
 }
 

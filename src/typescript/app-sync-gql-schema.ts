@@ -66,7 +66,6 @@ export const createResources = (
 	const resources = providers.flatMap((provider) =>
 		provider.createResources(scope, props, api, cfSchema),
 	);
-
 	const resolvers = createResolversFromSchema(cfSchema, resources);
 
 	// console.info("resolvers complete");
