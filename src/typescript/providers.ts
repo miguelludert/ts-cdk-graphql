@@ -13,6 +13,7 @@ import {
 } from "./interfaces";
 import { createDynamoResources } from "../providers/dynamo";
 import { cast } from "./utils";
+import { dump } from "../providers/utils";
 
 // data sources must be in typescript
 export class DynamoDatasourceProvider implements I_DatasourceProvider {

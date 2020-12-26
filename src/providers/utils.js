@@ -1,7 +1,8 @@
 import { INVOKE_ON_PROPS_ERROR_MESSAGE } from "../constants";
 import { join } from "path";
-import { toPairs } from "ramda";
+import { curry, toPairs } from "ramda";
 import * as self from './utils';
+import { pascalCase } from 'change-case';
 
 export const findStack = (cfSchema, stackName) => {
 	return cfSchema.stacks[stackName];
@@ -111,14 +112,25 @@ export function invokeOnConstruct(scope, construct, onConstruct, context) {
 	});
 }
 
+export const dump = (...args) => {
+	const dumpJson = (o) => {
+		let result;
+		try {
+			result = JSON.stringify(o, null, 2);
+		} catch(e) {
+			result = o;
+		}
+		return `*\t${result}`;
+	};
+	const toConsole = args.map(dumpJson).join('\n');
+	console.info(toConsole);
+}
+export const addSuffix = curry((suffix,str) => str.endsWith(suffix) ? str : `${str}${suffix}`);
+export const makeDatasourceName = (name) => addSuffix("Source", pascalCase(name));
+export const makeResolverName = addSuffix("-resolver");
+export const makeTableName = addSuffix("-table");
+export const makeFunctionName = addSuffix("-func");
+export const makeGraphqlApiName = addSuffix("-gql-api");
+export const makeStackName = addSuffix("-stack");
 
-
-export const dump = (...obj) =>
-	console.info(obj.map(`*\t${JSON.stringify(obj, null, 2)}\n`).join('\n'));
 global.dump = dump;
-export const dataSourceName = (args) => args;
-export const resolverName = (args) => args;
-export const tableName = (args) => args;
-export const functionName = (args) => args;
-export const graphqlApiName = (args) => args;
-export const stackName = (args) => args;

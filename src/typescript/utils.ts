@@ -3,6 +3,8 @@ import { readFileSync as privateReadFileSync } from 'fs';
 import { Construct } from "@aws-cdk/core";
 import { createConstruct as createConstructJs } from '../providers/utils';
 
+export * from '../providers/utils';
+
 export function cast<T>(obj: unknown): T {
 	return obj as T;
 }

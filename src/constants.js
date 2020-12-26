@@ -7,3 +7,4 @@ export const INVOKE_ON_PROPS_ERROR_MESSAGE =
 export const DATASOURCE_TYPE_DYNAMO = "AMAZON_DYNAMODB";
 export const RESOURCE_TYPE_DYNAMO = "AWS::DynamoDB::Table";
 export const RESOURCE_TYPE_DATASOURCE = "AWS::AppSync::DataSource";
+export const RESOURCE_TYPE_RESOLVER = "AWS::AppSync::Resolver"

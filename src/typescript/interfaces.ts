@@ -28,7 +28,7 @@ export interface I_DatasourceProvider {
 }
 
 export interface I_ConstructMap {
-	[key: string]: Construct[];
+	[key: string]: any;
 }
 
 export interface I_AppSyncGqlSchemaProps {

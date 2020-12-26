@@ -10,8 +10,15 @@ import { GraphQLTransform } from "graphql-transformer-core";
 import { I_AppSyncGqlSchemaProps, I_DatasourceProvider } from "./interfaces";
 import { NO_SCHEMA_ERROR_MESSAGE } from "../constants";
 import { DynamoDatasourceProvider } from "./providers";
+import { createResolversFromSchema } from "../providers/resolvers";
 import deepmerge from "deepmerge";
-import { cast, getProps, readFileSync, createConstruct } from "./utils";
+import {
+	cast,
+	getProps,
+	readFileSync,
+	createConstruct,
+	makeGraphqlApiName,
+} from "./utils";
 import * as self from "./app-sync-gql-schema";
 
 export const defaultDatasourceProviders: I_DatasourceProvider[] = [
@@ -56,11 +63,13 @@ export const createResources = (
 	providers: I_DatasourceProvider[],
 	cfSchema: object,
 ) => {
-	return providers.reduce(
-		(acc, provider) =>
-			deepmerge(acc, provider.createResources(scope, props, api, cfSchema)),
-		{},
+	const resources = providers.flatMap((provider) =>
+		provider.createResources(scope, props, api, cfSchema),
 	);
+
+	const resolvers = createResolversFromSchema(cfSchema, resources);
+
+	// console.info("resolvers complete");
 };
 
 export const getCfSchema = (
@@ -79,22 +88,18 @@ export const getCfSchema = (
 };
 
 export const createApi = (scope: Construct, schemaText: string): GraphqlApi => {
-	// const schema = new Schema();
-	// schema.definition = schemaText;
-	// //} as SchemaOptions);
-
 	const props = {
-		name: "graphql-api",
+		name: makeGraphqlApiName("replace-me"),
 		//schema,
 	};
 	const result = createConstruct<GraphqlApi, GraphqlApiProps>(
 		scope,
 		props,
 		GraphqlApi,
-		"graphql-api",
+		makeGraphqlApiName("replace-me"),
 	);
 
-	// this is a hack for the CFN to receive the schema text.  
+	// this is a hack for the CFN to receive the schema text.
 	result.schemaResource.definition = schemaText;
 	return result;
 };
