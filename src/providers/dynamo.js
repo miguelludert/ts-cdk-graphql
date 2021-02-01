@@ -1,23 +1,22 @@
-import { createDatasourceProps } from "../utils";
+import { getDatasourceCfn, info } from "./utils";
 import { curry, defaultTo, curry } from "ramda";
 import { Table, AttributeType } from "@aws-cdk/aws-dynamodb";
-import * as self from "./index";
-import { RESOURCE_TYPE_DYNAMO, DATASOURCE_TYPE_DYNAMO } from "../../constants";
-import * as self from "./index";
+import { RESOURCE_TYPE_DYNAMO, DATASOURCE_TYPE_DYNAMO } from "../constants";
+import * as self from "./dynamo";
 
-export const createDynamoDataSource = (scope, api, cfSchema) => {
-	const datasourceProps = createDatasourceProps(
-		createSingleDynamoTableProp,
+export const createDynamoDataSource = (scope, stackProps, api, cfSchema) => {
+	info("createDynamoDataSource");
+	const datasourceCfn = getDatasourceCfn(
 		DATASOURCE_TYPE_DYNAMO,
-		cfSchema,
+		cfSchema
 	);
-	const datasources = datasourceProps.map(
-		self.createDynamoResources(scope, api),
-	);
+	const bob = datasourceCfn.map(createSingleDynamoTableProp);
+	const datasources = bob.map(self.createDynamoResources(scope, api));
 	return datasources;
 };
 
 export const createDynamoResources = curry((scope, api, props) => {
+	info("createDynamoResources");
 	const { datasourceName, tableProps } = props;
 	const table = new Table(scope, tableProps.tableName, tableProps);
 	const datasource = api.addDynamoDbDataSource(datasourceName, table, {
@@ -40,6 +39,7 @@ export const createDynamoResources = curry((scope, api, props) => {
 
 export const createSingleDynamoTableProp = curry(
 	({ stackName, resourcePairs, datasourceName, datasourceCfn }) => {
+		info("createSingleDynamoTableProp");
 		const [tableName, tableCfn] = resourcePairs.find(
 			([resourceName, resourceCfn]) => resourceCfn.Type == RESOURCE_TYPE_DYNAMO,
 		);
@@ -69,6 +69,7 @@ export const createSingleDynamoTableProp = curry(
 );
 
 export const getDynamoAttributeProps = (keySchema, attributeDefinitions) => {
+	info("getDynamoAttributeProps");
 	const result = {};
 	const getAttributeTypes = (name) => {
 		const attr = attributeDefinitions.find((x) => x.AttributeName == name);
@@ -94,6 +95,7 @@ export const getDynamoAttributeProps = (keySchema, attributeDefinitions) => {
 };
 
 export const getIndex = defaultTo({}, (name, attributeDefinitions, indexes) => {
+	info("getIndex");
 	if (indexes) {
 		return {
 			[name]: indexes.map(({ IndexName, KeySchema, Projection }) => ({

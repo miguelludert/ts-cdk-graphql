@@ -1,38 +1,41 @@
-import { Construct } from "@aws-cdk/core";
-import { NestedStack } from "@aws-cdk/aws-cloudformation";
-import {
-	GraphqlApi,
-	GraphqlApiProps,
-	Schema,
-	SchemaOptions,
-} from "@aws-cdk/aws-appsync";
+import { Construct, NestedStack } from "@aws-cdk/core";
+import { GraphqlApi } from "@aws-cdk/aws-appsync";
 import { GraphQLTransform } from "graphql-transformer-core";
 import { I_AppSyncGqlSchemaProps, I_DatasourceProvider } from "./interfaces";
 import { NO_SCHEMA_ERROR_MESSAGE } from "../constants";
-import { DynamoDatasourceProvider } from "./providers";
-import { createResolversFromSchema } from "../providers/resolvers";
-import deepmerge from "deepmerge";
 import {
-	cast,
-	getProps,
-	readFileSync,
-	createConstruct,
-	makeGraphqlApiName,
-} from "./utils";
+	DynamoDatasourceProvider,
+	LambdaDatasourceProvider,
+} from "./providers";
+import { createResolversAndFunctionsFromSchema } from "../providers/functions";
+import deepmerge from "deepmerge";
+import { cast, readFileSync, createConstruct, info } from "./utils";
 import * as self from "./app-sync-gql-schema";
+import { helpInformation } from "commander";
 
 export const defaultDatasourceProviders: I_DatasourceProvider[] = [
 	new DynamoDatasourceProvider(),
-	//cast<I_DatasourceProvider>(LambdaDatasourceProvider),
+	new LambdaDatasourceProvider(),
 ];
 
 export class AppSyncGqlSchema extends NestedStack {
 	constructor(scope: Construct, name: string, props: I_AppSyncGqlSchemaProps) {
 		super(scope, name);
 
+		if (!props.namingConvention) {
+			props.namingConvention = (name) => name;
+		}
+
+		const baseName = props.baseName || name;
+		info("getProviders");
 		const providers = self.getProviders(props);
-		const cfSchema = self.getCfSchema(props, providers);
-		const api = self.createApi(scope, cfSchema.schema);
+		info("getSchemaText");
+		const schemaText = self.getSchemaText(props);
+		info("getCfSchema");
+		const cfSchema = self.getCfSchema(schemaText, providers);
+		info("createApi");
+		const api = self.createApi(scope, props, cfSchema.schema);
+		info("createResources");
 		const datasources = createResources(this, props, api, providers, cfSchema);
 		// Object.assign(this, datasources);
 	}
@@ -41,7 +44,9 @@ export class AppSyncGqlSchema extends NestedStack {
 export const getProviders = (
 	props: I_AppSyncGqlSchemaProps,
 ): I_DatasourceProvider[] => {
-	return [...defaultDatasourceProviders, ...(props.datasourceProviders || [])];
+	const datasourceProviders =
+		props && props.datasourceProviders ? props.datasourceProviders : [];
+	return [...defaultDatasourceProviders, ...datasourceProviders];
 };
 
 export const getSchemaText = (props: I_AppSyncGqlSchemaProps): string => {
@@ -66,16 +71,15 @@ export const createResources = (
 	const resources = providers.flatMap((provider) =>
 		provider.createResources(scope, props, api, cfSchema),
 	);
-	const resolvers = createResolversFromSchema(cfSchema, resources);
-
-	// console.info("resolvers complete");
+	const { funcs, resolvers } = <any>(
+		createResolversAndFunctionsFromSchema(cfSchema, resources)
+	);
 };
 
 export const getCfSchema = (
-	props: I_AppSyncGqlSchemaProps,
+	schemaText: string,
 	providers: I_DatasourceProvider[],
 ): any => {
-	const schemaText = self.getSchemaText(props);
 	const transformers = providers.flatMap((provider) =>
 		provider.getTransformer(),
 	);
@@ -86,18 +90,12 @@ export const getCfSchema = (
 	return cfSchema;
 };
 
-export const createApi = (scope: Construct, schemaText: string): GraphqlApi => {
-	const props = {
-		name: makeGraphqlApiName("replace-me"),
-		//schema,
-	};
-	const result = createConstruct<GraphqlApi, GraphqlApiProps>(
-		scope,
-		props,
-		GraphqlApi,
-		makeGraphqlApiName("replace-me"),
-	);
-
+export const createApi = (
+	scope: Construct,
+	props: I_AppSyncGqlSchemaProps,
+	schemaText: string,
+): GraphqlApi => {
+	const result = createConstruct(scope, props, GraphqlApi, "gql-api");
 	// this is a hack for the CFN to receive the schema text.
 	result.schemaResource.definition = schemaText;
 	return result;

@@ -32,11 +32,17 @@ export interface I_ConstructMap {
 }
 
 export interface I_AppSyncGqlSchemaProps {
+	baseName? : string;
+	
 	environment?: {
 		[key: string]: string;
 	};
 	context?: any;
-	prefix?: string;
+	lambdaFunctionCodeDir?: string;
+	lambdaFunctionName?: string;
+	lambdaHandlerName?: string;
+	lambdaRuntime?: string;
+	namingConvention?: (resourceName: string, typeName: string) => string;
 	schemaFile?: string;
 	schemaText?: string;
 	defaultsDirectory?: string;
@@ -44,4 +50,10 @@ export interface I_AppSyncGqlSchemaProps {
 	defaults?: I_ConstructSetupProps;
 	overrides?: I_ConstructSetupProps;
 	datasourceProviders?: I_DatasourceProvider[];
+}
+
+export interface I_CreateConstructContext {
+	resourceName : string;
+	props : I_AppSyncGqlSchemaProps
+	[key: string] : any;
 }

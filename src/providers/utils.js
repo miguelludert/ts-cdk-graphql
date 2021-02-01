@@ -1,9 +1,11 @@
 import { INVOKE_ON_PROPS_ERROR_MESSAGE } from "../constants";
 import { join } from "path";
-import { curry, toPairs } from "ramda";
+import { curry, toPairs, pipe } from "ramda";
 import * as self from "./utils";
-import { pascalCase } from "change-case";
-import { RESOURCE_TYPE_DATASOURCE } from '../constants';
+import { pascalCase, camelCase, paramCase } from "change-case";
+import { RESOURCE_TYPE_DATASOURCE } from "../constants";
+import * as defaultSetup from "./default-setup";
+import { SyncUtils } from "graphql-transformer-core";
 
 export const findStack = (cfSchema, stackName) => {
 	return cfSchema.stacks[stackName];
@@ -23,59 +25,42 @@ export const gatherStacks = (cfSchema) => {
 };
 
 export const createConstruct = (scope, props, constructType, resourceName) => {
-	const { onProps, onConstruct } = self.gatherConstructSetups(
+	info("createConstruct");
+	const { baseName, onProps, onConstruct } = self.gatherConstructSetups(
 		props,
 		constructType,
-		resourceName,
 	);
+	const name =
+		typeof props.namingConvention === "function"
+			? props.namingConvention(resourceName, baseName)
+			: paramCase(`${resourceName}-${baseName}`);
+
 	const context = {
+		props,
+		name,
+		baseName,
 		resourceName,
 	};
 	const constructProps = self.invokeOnProps(scope, onProps, context);
-	const construct = new constructType(scope, resourceName, constructProps);
+	const construct = new constructType(scope, name, constructProps);
 	self.invokeOnConstruct(scope, construct, onConstruct, context);
 	return construct;
 };
 
-export function requireConstructSetup(path) {
-	let setup = require(path);
-	if (!setup) {
-		return null;
-	} else if (setup.default) {
-		return setup.default;
-	} else {
-		return setup;
-	}
-}
+export function gatherConstructSetups(props, type) {
+	const { name: typeName } = type;
+	const setupName = `${camelCase(typeName)}Setup`;
+	const setup = defaultSetup[setupName];
+	const baseName = setup.baseName || typeName;
+	const setups = [setup];
 
-export function gatherConstructSetups(props, type, resourceName) {
-	const setups = [];
-
-	const addSetupFile = (condition, ...paths) => {
-		if (condition) {
-			const path = join(...paths);
-			const setup = self.requireConstructSetup(path);
-			if (setup) {
-				setups.push(setup);
-			}
-		}
-	};
-
-	addSetupFile(true, __dirname, `../defaults/${type.name}`);
-	addSetupFile(props.defaultsDirectory, props.defaultsDirectory, type.name);
-	addSetupFile(
-		props.overridesDirectory,
-		props.overridesDirectory,
-		resourceName,
-	);
-
-	if (props.defaults && props.defaults[type.name]) {
-		setups.push(props.defaults[type.name]);
+	if (props.defaults && props.defaults[typeName]) {
+		setups.push(props.defaults[typeName]);
 	}
 
-	if (props.overrides && props.overrides[resourceName]) {
-		setups.push(props.overrides[resourceName]);
-	}
+	// if (props.overrides && props.overrides[resourceName]) {
+	// 	setups.push(props.overrides[resourceName]);
+	// }
 
 	return setups.reduce(
 		(acc, setup) => {
@@ -90,6 +75,7 @@ export function gatherConstructSetups(props, type, resourceName) {
 			return acc;
 		},
 		{
+			baseName,
 			onProps: [],
 			onConstruct: [],
 		},
@@ -97,6 +83,7 @@ export function gatherConstructSetups(props, type, resourceName) {
 }
 
 export function invokeOnProps(scope, onProps, context) {
+	info("invokeOnProps");
 	let props = null;
 	onProps.forEach((callback) => {
 		props = callback(scope, props, context);
@@ -108,33 +95,32 @@ export function invokeOnProps(scope, onProps, context) {
 }
 
 export function invokeOnConstruct(scope, construct, onConstruct, context) {
+	info("invokeOnConstruct");
 	onConstruct.forEach((callback) => {
 		callback(scope, construct, context);
 	});
 }
 
-export const createDatasourceProps = curry((propsCallback, datasourceType, cfnSchema) => {
+export const getDatasourceCfn = curry((datasourceType, cfnSchema) => {
 	// get dynamo resources by stack
-	console.info(0)
 	const result = Object.entries(cfnSchema.stacks).reduce(
 		(acc, [stackName, stackCfn]) => {
 			const resourcePairs = Object.entries(stackCfn.Resources);
 			const datasourcePairs = resourcePairs.find(
 				([resourceName, resourceCfn]) => {
 					const isDatasource = resourceCfn.Type === RESOURCE_TYPE_DATASOURCE;
-					const isDynamo = resourceCfn.Properties.Type === datasourceType;//"AMAZON_DYNAMODB";
+					const isDynamo = resourceCfn.Properties.Type === datasourceType;
 					return isDatasource && isDynamo;
 				},
 			);
 			if (datasourcePairs) {
-				const [ datasourceName, datasourceCfn ] = datasourcePairs;
-				const props = propsCallback({
+				const [datasourceName, datasourceCfn] = datasourcePairs;
+				acc.push({
 					stackName,
 					resourcePairs,
 					datasourceName,
 					datasourceCfn,
 				});
-				acc.push(props);
 			}
 			return acc;
 		},
@@ -142,6 +128,8 @@ export const createDatasourceProps = curry((propsCallback, datasourceType, cfnSc
 	);
 	return result;
 });
+
+export const info = (...args) => console.info(...args);
 
 export const dump = (...args) => {
 	const dumpJson = (o) => {
@@ -159,12 +147,5 @@ export const dump = (...args) => {
 export const addSuffix = curry((suffix, str) =>
 	str.endsWith(suffix) ? str : `${str}${suffix}`,
 );
-export const makeDatasourceName = (name) =>
-	addSuffix("Source", pascalCase(name));
-export const makeResolverName = addSuffix("-resolver");
-export const makeTableName = addSuffix("-table");
-export const makeFunctionName = addSuffix("-func");
-export const makeGraphqlApiName = addSuffix("-gql-api");
-export const makeStackName = addSuffix("-stack");
 
 global.dump = dump;

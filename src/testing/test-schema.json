@@ -41,29 +41,6 @@
           "false"
         ]
       },
-      "AppSyncApiName": {
-        "Type": "String",
-        "Description": "The name of the AppSync API",
-        "Default": "AppSyncSimpleTransform"
-      },
-      "APIKeyExpirationEpoch": {
-        "Type": "Number",
-        "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
-        "Default": 0,
-        "MinValue": -1
-      },
-      "CreateAPIKey": {
-        "Type": "Number",
-        "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
-        "Default": 0,
-        "MinValue": 0,
-        "MaxValue": 1
-      },
-      "AuthCognitoUserPoolId": {
-        "Type": "String",
-        "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
-        "Default": "NONE"
-      },
       "env": {
         "Type": "String",
         "Description": "The environment name. e.g. Dev, Test, or Production",
@@ -105,27 +82,6 @@
           },
           "AuthenticationType": "API_KEY"
         }
-      },
-      "GraphQLAPIKey": {
-        "Type": "AWS::AppSync::ApiKey",
-        "Properties": {
-          "ApiId": {
-            "Fn::GetAtt": [
-              "GraphQLAPI",
-              "ApiId"
-            ]
-          },
-          "Expires": {
-            "Fn::If": [
-              "APIKeyExpirationEpochIsPositive",
-              {
-                "Ref": "APIKeyExpirationEpoch"
-              },
-              1596680430
-            ]
-          }
-        },
-        "Condition": "ShouldCreateAPIKey"
       },
       "GraphQLSchema": {
         "Type": "AWS::AppSync::GraphQLSchema",
@@ -175,18 +131,6 @@
             },
             "DynamoDBEnableServerSideEncryption": {
               "Ref": "DynamoDBEnableServerSideEncryption"
-            },
-            "AppSyncApiName": {
-              "Ref": "AppSyncApiName"
-            },
-            "APIKeyExpirationEpoch": {
-              "Ref": "APIKeyExpirationEpoch"
-            },
-            "CreateAPIKey": {
-              "Ref": "CreateAPIKey"
-            },
-            "AuthCognitoUserPoolId": {
-              "Ref": "AuthCognitoUserPoolId"
             },
             "env": {
               "Ref": "env"
@@ -250,18 +194,6 @@
             "DynamoDBEnableServerSideEncryption": {
               "Ref": "DynamoDBEnableServerSideEncryption"
             },
-            "AppSyncApiName": {
-              "Ref": "AppSyncApiName"
-            },
-            "APIKeyExpirationEpoch": {
-              "Ref": "APIKeyExpirationEpoch"
-            },
-            "CreateAPIKey": {
-              "Ref": "CreateAPIKey"
-            },
-            "AuthCognitoUserPoolId": {
-              "Ref": "AuthCognitoUserPoolId"
-            },
             "env": {
               "Ref": "env"
             },
@@ -324,18 +256,6 @@
             "DynamoDBEnableServerSideEncryption": {
               "Ref": "DynamoDBEnableServerSideEncryption"
             },
-            "AppSyncApiName": {
-              "Ref": "AppSyncApiName"
-            },
-            "APIKeyExpirationEpoch": {
-              "Ref": "APIKeyExpirationEpoch"
-            },
-            "CreateAPIKey": {
-              "Ref": "CreateAPIKey"
-            },
-            "AuthCognitoUserPoolId": {
-              "Ref": "AuthCognitoUserPoolId"
-            },
             "env": {
               "Ref": "env"
             },
@@ -397,18 +317,6 @@
             },
             "DynamoDBEnableServerSideEncryption": {
               "Ref": "DynamoDBEnableServerSideEncryption"
-            },
-            "AppSyncApiName": {
-              "Ref": "AppSyncApiName"
-            },
-            "APIKeyExpirationEpoch": {
-              "Ref": "APIKeyExpirationEpoch"
-            },
-            "CreateAPIKey": {
-              "Ref": "CreateAPIKey"
-            },
-            "AuthCognitoUserPoolId": {
-              "Ref": "AuthCognitoUserPoolId"
             },
             "env": {
               "Ref": "env"
@@ -492,29 +400,6 @@
             ]
           }
         }
-      },
-      "GraphQLAPIKeyOutput": {
-        "Description": "Your GraphQL API key. Provide via 'x-api-key' header.",
-        "Value": {
-          "Fn::GetAtt": [
-            "GraphQLAPIKey",
-            "ApiKey"
-          ]
-        },
-        "Export": {
-          "Name": {
-            "Fn::Join": [
-              ":",
-              [
-                {
-                  "Ref": "AWS::StackName"
-                },
-                "GraphQLApiKey"
-              ]
-            ]
-          }
-        },
-        "Condition": "ShouldCreateAPIKey"
       }
     },
     "Mappings": {},
@@ -541,42 +426,6 @@
             "Ref": "DynamoDBEnableServerSideEncryption"
           },
           "true"
-        ]
-      },
-      "ShouldCreateAPIKey": {
-        "Fn::Equals": [
-          {
-            "Ref": "CreateAPIKey"
-          },
-          1
-        ]
-      },
-      "APIKeyExpirationEpochIsPositive": {
-        "Fn::And": [
-          {
-            "Fn::Not": [
-              {
-                "Fn::Equals": [
-                  {
-                    "Ref": "APIKeyExpirationEpoch"
-                  },
-                  -1
-                ]
-              }
-            ]
-          },
-          {
-            "Fn::Not": [
-              {
-                "Fn::Equals": [
-                  {
-                    "Ref": "APIKeyExpirationEpoch"
-                  },
-                  0
-                ]
-              }
-            ]
-          }
         ]
       },
       "HasEnvironmentParameter": {
@@ -635,29 +484,6 @@
             "true",
             "false"
           ]
-        },
-        "AppSyncApiName": {
-          "Type": "String",
-          "Description": "The name of the AppSync API",
-          "Default": "AppSyncSimpleTransform"
-        },
-        "APIKeyExpirationEpoch": {
-          "Type": "Number",
-          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
-          "Default": 0,
-          "MinValue": -1
-        },
-        "CreateAPIKey": {
-          "Type": "Number",
-          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
-          "Default": 0,
-          "MinValue": 0,
-          "MaxValue": 1
-        },
-        "AuthCognitoUserPoolId": {
-          "Type": "String",
-          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
-          "Default": "NONE"
         },
         "env": {
           "Type": "String",
@@ -1398,42 +1224,6 @@
             "true"
           ]
         },
-        "ShouldCreateAPIKey": {
-          "Fn::Equals": [
-            {
-              "Ref": "CreateAPIKey"
-            },
-            1
-          ]
-        },
-        "APIKeyExpirationEpochIsPositive": {
-          "Fn::And": [
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    -1
-                  ]
-                }
-              ]
-            },
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    0
-                  ]
-                }
-              ]
-            }
-          ]
-        },
         "HasEnvironmentParameter": {
           "Fn::Not": [
             {
@@ -1489,29 +1279,6 @@
             "true",
             "false"
           ]
-        },
-        "AppSyncApiName": {
-          "Type": "String",
-          "Description": "The name of the AppSync API",
-          "Default": "AppSyncSimpleTransform"
-        },
-        "APIKeyExpirationEpoch": {
-          "Type": "Number",
-          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
-          "Default": 0,
-          "MinValue": -1
-        },
-        "CreateAPIKey": {
-          "Type": "Number",
-          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
-          "Default": 0,
-          "MinValue": 0,
-          "MaxValue": 1
-        },
-        "AuthCognitoUserPoolId": {
-          "Type": "String",
-          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
-          "Default": "NONE"
         },
         "env": {
           "Type": "String",
@@ -2260,42 +2027,6 @@
             "true"
           ]
         },
-        "ShouldCreateAPIKey": {
-          "Fn::Equals": [
-            {
-              "Ref": "CreateAPIKey"
-            },
-            1
-          ]
-        },
-        "APIKeyExpirationEpochIsPositive": {
-          "Fn::And": [
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    -1
-                  ]
-                }
-              ]
-            },
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    0
-                  ]
-                }
-              ]
-            }
-          ]
-        },
         "HasEnvironmentParameter": {
           "Fn::Not": [
             {
@@ -2351,29 +2082,6 @@
             "true",
             "false"
           ]
-        },
-        "AppSyncApiName": {
-          "Type": "String",
-          "Description": "The name of the AppSync API",
-          "Default": "AppSyncSimpleTransform"
-        },
-        "APIKeyExpirationEpoch": {
-          "Type": "Number",
-          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
-          "Default": 0,
-          "MinValue": -1
-        },
-        "CreateAPIKey": {
-          "Type": "Number",
-          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
-          "Default": 0,
-          "MinValue": 0,
-          "MaxValue": 1
-        },
-        "AuthCognitoUserPoolId": {
-          "Type": "String",
-          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
-          "Default": "NONE"
         },
         "env": {
           "Type": "String",
@@ -3156,42 +2864,6 @@
             "true"
           ]
         },
-        "ShouldCreateAPIKey": {
-          "Fn::Equals": [
-            {
-              "Ref": "CreateAPIKey"
-            },
-            1
-          ]
-        },
-        "APIKeyExpirationEpochIsPositive": {
-          "Fn::And": [
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    -1
-                  ]
-                }
-              ]
-            },
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    0
-                  ]
-                }
-              ]
-            }
-          ]
-        },
         "HasEnvironmentParameter": {
           "Fn::Not": [
             {
@@ -3248,29 +2920,6 @@
             "false"
           ]
         },
-        "AppSyncApiName": {
-          "Type": "String",
-          "Description": "The name of the AppSync API",
-          "Default": "AppSyncSimpleTransform"
-        },
-        "APIKeyExpirationEpoch": {
-          "Type": "Number",
-          "Description": "The epoch time in seconds when the API Key should expire. Setting this to 0 will default to 7 days from the deployment date. Setting this to -1 will not create an API Key.",
-          "Default": 0,
-          "MinValue": -1
-        },
-        "CreateAPIKey": {
-          "Type": "Number",
-          "Description": "The boolean value to control if an API Key will be created or not. The value of the property is automatically set by the CLI. If the value is set to 0 no API Key will be created.",
-          "Default": 0,
-          "MinValue": 0,
-          "MaxValue": 1
-        },
-        "AuthCognitoUserPoolId": {
-          "Type": "String",
-          "Description": "The id of an existing User Pool to connect. If this is changed, a user pool will not be created for you.",
-          "Default": "NONE"
-        },
         "env": {
           "Type": "String",
           "Description": "The environment name. e.g. Dev, Test, or Production",
@@ -3294,7 +2943,7 @@
         }
       },
       "Resources": {
-        "TagCloudLambdaDataSourceRole": {
+        "HelloWorldLambdaDataSourceRole": {
           "Type": "AWS::IAM::Role",
           "Properties": {
             "RoleName": {
@@ -3304,7 +2953,7 @@
                   "Fn::Join": [
                     "-",
                     [
-                      "TagClouda3c5",
+                      "HelloWorlde9d6",
                       {
                         "Ref": "GetAttGraphQLAPIApiId"
                       },
@@ -3318,7 +2967,7 @@
                   "Fn::Join": [
                     "-",
                     [
-                      "TagClouda3c5",
+                      "HelloWorlde9d6",
                       {
                         "Ref": "GetAttGraphQLAPIApiId"
                       }
@@ -3355,7 +3004,7 @@
                           "HasEnvironmentParameter",
                           {
                             "Fn::Sub": [
-                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-tag-cloud",
+                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-hello-world",
                               {
                                 "env": {
                                   "Ref": "env"
@@ -3365,7 +3014,7 @@
                           },
                           {
                             "Fn::Sub": [
-                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-tag-cloud",
+                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-hello-world",
                               {}
                             ]
                           }
@@ -3378,17 +3027,17 @@
             ]
           }
         },
-        "TagCloudLambdaDataSource": {
+        "HelloWorldLambdaDataSource": {
           "Type": "AWS::AppSync::DataSource",
           "Properties": {
             "ApiId": {
               "Ref": "AppSyncApiId"
             },
-            "Name": "TagCloudLambdaDataSource",
+            "Name": "HelloWorldLambdaDataSource",
             "Type": "AWS_LAMBDA",
             "ServiceRoleArn": {
               "Fn::GetAtt": [
-                "TagCloudLambdaDataSourceRole",
+                "HelloWorldLambdaDataSourceRole",
                 "Arn"
               ]
             },
@@ -3398,7 +3047,7 @@
                   "HasEnvironmentParameter",
                   {
                     "Fn::Sub": [
-                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-tag-cloud",
+                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-hello-world",
                       {
                         "env": {
                           "Ref": "env"
@@ -3408,7 +3057,7 @@
                   },
                   {
                     "Fn::Sub": [
-                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-tag-cloud",
+                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-hello-world",
                       {}
                     ]
                   }
@@ -3416,16 +3065,16 @@
               }
             }
           },
-          "DependsOn": "TagCloudLambdaDataSourceRole"
+          "DependsOn": "HelloWorldLambdaDataSourceRole"
         },
-        "InvokeTagCloudLambdaDataSource": {
+        "InvokeHelloWorldLambdaDataSource": {
           "Type": "AWS::AppSync::FunctionConfiguration",
           "Properties": {
             "ApiId": {
               "Ref": "AppSyncApiId"
             },
-            "Name": "InvokeTagCloudLambdaDataSource",
-            "DataSourceName": "TagCloudLambdaDataSource",
+            "Name": "InvokeHelloWorldLambdaDataSource",
+            "DataSourceName": "HelloWorldLambdaDataSource",
             "FunctionVersion": "2018-05-29",
             "RequestMappingTemplateS3Location": {
               "Fn::Sub": [
@@ -3441,7 +3090,7 @@
                     "Fn::Join": [
                       ".",
                       [
-                        "InvokeTagCloudLambdaDataSource",
+                        "InvokeHelloWorldLambdaDataSource",
                         "req",
                         "vtl"
                       ]
@@ -3464,7 +3113,7 @@
                     "Fn::Join": [
                       ".",
                       [
-                        "InvokeTagCloudLambdaDataSource",
+                        "InvokeHelloWorldLambdaDataSource",
                         "res",
                         "vtl"
                       ]
@@ -3474,22 +3123,22 @@
               ]
             }
           },
-          "DependsOn": "TagCloudLambdaDataSource"
+          "DependsOn": "HelloWorldLambdaDataSource"
         },
-        "QuerytagCloudResolver": {
+        "QueryhelloWorldResolver": {
           "Type": "AWS::AppSync::Resolver",
           "Properties": {
             "ApiId": {
               "Ref": "AppSyncApiId"
             },
             "TypeName": "Query",
-            "FieldName": "tagCloud",
+            "FieldName": "helloWorld",
             "Kind": "PIPELINE",
             "PipelineConfig": {
               "Functions": [
                 {
                   "Fn::GetAtt": [
-                    "InvokeTagCloudLambdaDataSource",
+                    "InvokeHelloWorldLambdaDataSource",
                     "FunctionId"
                   ]
                 }
@@ -3510,7 +3159,7 @@
                       ".",
                       [
                         "Query",
-                        "tagCloud",
+                        "helloWorld",
                         "req",
                         "vtl"
                       ]
@@ -3534,7 +3183,7 @@
                       ".",
                       [
                         "Query",
-                        "tagCloud",
+                        "helloWorld",
                         "res",
                         "vtl"
                       ]
@@ -3544,9 +3193,9 @@
               ]
             }
           },
-          "DependsOn": "InvokeTagCloudLambdaDataSource"
+          "DependsOn": "InvokeHelloWorldLambdaDataSource"
         },
-        "RecommendedPostsLambdaDataSourceRole": {
+        "GoodByeWorldLambdaDataSourceRole": {
           "Type": "AWS::IAM::Role",
           "Properties": {
             "RoleName": {
@@ -3556,7 +3205,7 @@
                   "Fn::Join": [
                     "-",
                     [
-                      "RecommendedPosts21a8",
+                      "GoodByeWorld56f2",
                       {
                         "Ref": "GetAttGraphQLAPIApiId"
                       },
@@ -3570,7 +3219,7 @@
                   "Fn::Join": [
                     "-",
                     [
-                      "RecommendedPosts21a8",
+                      "GoodByeWorld56f2",
                       {
                         "Ref": "GetAttGraphQLAPIApiId"
                       }
@@ -3607,7 +3256,7 @@
                           "HasEnvironmentParameter",
                           {
                             "Fn::Sub": [
-                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-recommended-posts",
+                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-good-bye-world",
                               {
                                 "env": {
                                   "Ref": "env"
@@ -3617,7 +3266,7 @@
                           },
                           {
                             "Fn::Sub": [
-                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-recommended-posts",
+                              "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-good-bye-world",
                               {}
                             ]
                           }
@@ -3630,17 +3279,17 @@
             ]
           }
         },
-        "RecommendedPostsLambdaDataSource": {
+        "GoodByeWorldLambdaDataSource": {
           "Type": "AWS::AppSync::DataSource",
           "Properties": {
             "ApiId": {
               "Ref": "AppSyncApiId"
             },
-            "Name": "RecommendedPostsLambdaDataSource",
+            "Name": "GoodByeWorldLambdaDataSource",
             "Type": "AWS_LAMBDA",
             "ServiceRoleArn": {
               "Fn::GetAtt": [
-                "RecommendedPostsLambdaDataSourceRole",
+                "GoodByeWorldLambdaDataSourceRole",
                 "Arn"
               ]
             },
@@ -3650,7 +3299,7 @@
                   "HasEnvironmentParameter",
                   {
                     "Fn::Sub": [
-                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-recommended-posts",
+                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-good-bye-world",
                       {
                         "env": {
                           "Ref": "env"
@@ -3660,7 +3309,7 @@
                   },
                   {
                     "Fn::Sub": [
-                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-recommended-posts",
+                      "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${env}-good-bye-world",
                       {}
                     ]
                   }
@@ -3668,16 +3317,16 @@
               }
             }
           },
-          "DependsOn": "RecommendedPostsLambdaDataSourceRole"
+          "DependsOn": "GoodByeWorldLambdaDataSourceRole"
         },
-        "InvokeRecommendedPostsLambdaDataSource": {
+        "InvokeGoodByeWorldLambdaDataSource": {
           "Type": "AWS::AppSync::FunctionConfiguration",
           "Properties": {
             "ApiId": {
               "Ref": "AppSyncApiId"
             },
-            "Name": "InvokeRecommendedPostsLambdaDataSource",
-            "DataSourceName": "RecommendedPostsLambdaDataSource",
+            "Name": "InvokeGoodByeWorldLambdaDataSource",
+            "DataSourceName": "GoodByeWorldLambdaDataSource",
             "FunctionVersion": "2018-05-29",
             "RequestMappingTemplateS3Location": {
               "Fn::Sub": [
@@ -3693,7 +3342,7 @@
                     "Fn::Join": [
                       ".",
                       [
-                        "InvokeRecommendedPostsLambdaDataSource",
+                        "InvokeGoodByeWorldLambdaDataSource",
                         "req",
                         "vtl"
                       ]
@@ -3716,7 +3365,7 @@
                     "Fn::Join": [
                       ".",
                       [
-                        "InvokeRecommendedPostsLambdaDataSource",
+                        "InvokeGoodByeWorldLambdaDataSource",
                         "res",
                         "vtl"
                       ]
@@ -3726,22 +3375,22 @@
               ]
             }
           },
-          "DependsOn": "RecommendedPostsLambdaDataSource"
+          "DependsOn": "GoodByeWorldLambdaDataSource"
         },
-        "QueryrecommendedPostsResolver": {
+        "MutationgoodByeWorldResolver": {
           "Type": "AWS::AppSync::Resolver",
           "Properties": {
             "ApiId": {
               "Ref": "AppSyncApiId"
             },
-            "TypeName": "Query",
-            "FieldName": "recommendedPosts",
+            "TypeName": "Mutation",
+            "FieldName": "goodByeWorld",
             "Kind": "PIPELINE",
             "PipelineConfig": {
               "Functions": [
                 {
                   "Fn::GetAtt": [
-                    "InvokeRecommendedPostsLambdaDataSource",
+                    "InvokeGoodByeWorldLambdaDataSource",
                     "FunctionId"
                   ]
                 }
@@ -3761,8 +3410,8 @@
                     "Fn::Join": [
                       ".",
                       [
-                        "Query",
-                        "recommendedPosts",
+                        "Mutation",
+                        "goodByeWorld",
                         "req",
                         "vtl"
                       ]
@@ -3785,8 +3434,8 @@
                     "Fn::Join": [
                       ".",
                       [
-                        "Query",
-                        "recommendedPosts",
+                        "Mutation",
+                        "goodByeWorld",
                         "res",
                         "vtl"
                       ]
@@ -3796,7 +3445,7 @@
               ]
             }
           },
-          "DependsOn": "InvokeRecommendedPostsLambdaDataSource"
+          "DependsOn": "InvokeGoodByeWorldLambdaDataSource"
         }
       },
       "Outputs": {},
@@ -3824,42 +3473,6 @@
               "Ref": "DynamoDBEnableServerSideEncryption"
             },
             "true"
-          ]
-        },
-        "ShouldCreateAPIKey": {
-          "Fn::Equals": [
-            {
-              "Ref": "CreateAPIKey"
-            },
-            1
-          ]
-        },
-        "APIKeyExpirationEpochIsPositive": {
-          "Fn::And": [
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    -1
-                  ]
-                }
-              ]
-            },
-            {
-              "Fn::Not": [
-                {
-                  "Fn::Equals": [
-                    {
-                      "Ref": "APIKeyExpirationEpoch"
-                    },
-                    0
-                  ]
-                }
-              ]
-            }
           ]
         },
         "HasEnvironmentParameter": {
@@ -3903,15 +3516,14 @@
     "CreateCommentResolver": "Comment",
     "UpdateCommentResolver": "Comment",
     "DeleteCommentResolver": "Comment",
-    "GraphQLAPIKey": "root",
-    "TagCloudLambdaDataSourceRole": "FunctionDirectiveStack",
-    "TagCloudLambdaDataSource": "FunctionDirectiveStack",
-    "InvokeTagCloudLambdaDataSource": "FunctionDirectiveStack",
-    "QuerytagCloudResolver": "FunctionDirectiveStack",
-    "RecommendedPostsLambdaDataSourceRole": "FunctionDirectiveStack",
-    "RecommendedPostsLambdaDataSource": "FunctionDirectiveStack",
-    "InvokeRecommendedPostsLambdaDataSource": "FunctionDirectiveStack",
-    "QueryrecommendedPostsResolver": "FunctionDirectiveStack",
+    "HelloWorldLambdaDataSourceRole": "FunctionDirectiveStack",
+    "HelloWorldLambdaDataSource": "FunctionDirectiveStack",
+    "InvokeHelloWorldLambdaDataSource": "FunctionDirectiveStack",
+    "QueryhelloWorldResolver": "FunctionDirectiveStack",
+    "GoodByeWorldLambdaDataSourceRole": "FunctionDirectiveStack",
+    "GoodByeWorldLambdaDataSource": "FunctionDirectiveStack",
+    "InvokeGoodByeWorldLambdaDataSource": "FunctionDirectiveStack",
+    "MutationgoodByeWorldResolver": "FunctionDirectiveStack",
     "GraphQLSchema": "root",
     "GraphQLAPIIdOutput": "root",
     "GraphQLAPIEndpointOutput": "root",
@@ -3923,8 +3535,7 @@
     "GetAttBlogPostTableName": "BlogPost",
     "GetAttCommentTableStreamArn": "Comment",
     "GetAttCommentDataSourceName": "Comment",
-    "GetAttCommentTableName": "Comment",
-    "GraphQLAPIKeyOutput": "root"
+    "GetAttCommentTableName": "Comment"
   },
   "resolvers": {
     "Query.getBlog.req.vtl": "## [Start] Set the primary @key. **\n#set( $modelObjectKey = {\n  \"blogId\": $util.dynamodb.toDynamoDB($ctx.args.blogId)\n} )\n## [End] Set the primary @key. **\n{\n  \"version\": \"2018-05-29\",\n  \"operation\": \"GetItem\",\n  \"key\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {\n  \"id\": $util.dynamodb.toDynamoDBJson($ctx.args.id)\n} #end\n}",
@@ -3957,17 +3568,17 @@
     "Mutation.updateComment.res.vtl": "#if( $ctx.error )\n$util.error($ctx.error.message, $ctx.error.type)\n#else\n$util.toJson($ctx.result)\n#end",
     "Mutation.deleteComment.req.vtl": "\n## [Start] Set the primary @key. **\n#set( $modelObjectKey = {\n  \"blogPostId\": $util.dynamodb.toDynamoDB($ctx.args.input.blogPostId),\n  \"commentId\": $util.dynamodb.toDynamoDB($ctx.args.input.commentId)\n} )\n## [End] Set the primary @key. **\n#if( $authCondition )\n  #set( $condition = $authCondition )\n  #if( $modelObjectKey )\n    #foreach( $entry in $modelObjectKey.entrySet() )\n      $util.qr($condition.put(\"expression\", \"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\"))\n      $util.qr($condition.expressionNames.put(\"#keyCondition$velocityCount\", \"$entry.key\"))\n    #end\n  #else\n    $util.qr($condition.put(\"expression\", \"$condition.expression AND attribute_exists(#id)\"))\n    $util.qr($condition.expressionNames.put(\"#id\", \"id\"))\n  #end\n#else\n  #if( $modelObjectKey )\n    #set( $condition = {\n  \"expression\": \"\",\n  \"expressionNames\": {}\n} )\n    #foreach( $entry in $modelObjectKey.entrySet() )\n      #if( $velocityCount == 1 )\n        $util.qr($condition.put(\"expression\", \"attribute_exists(#keyCondition$velocityCount)\"))\n      #else\n        $util.qr($condition.put(\"expression\", \"$condition.expression AND attribute_exists(#keyCondition$velocityCount)\"))\n      #end\n      $util.qr($condition.expressionNames.put(\"#keyCondition$velocityCount\", \"$entry.key\"))\n    #end\n  #else\n    #set( $condition = {\n  \"expression\": \"attribute_exists(#id)\",\n  \"expressionNames\": {\n      \"#id\": \"id\"\n  }\n} )\n  #end\n#end\n#if( $versionedCondition )\n  $util.qr($condition.put(\"expression\", \"($condition.expression) AND $versionedCondition.expression\"))\n  $util.qr($condition.expressionNames.putAll($versionedCondition.expressionNames))\n  #set( $expressionValues = $util.defaultIfNull($condition.expressionValues, {}) )\n  $util.qr($expressionValues.putAll($versionedCondition.expressionValues))\n  #set( $condition.expressionValues = $expressionValues )\n#end\n#if( $context.args.condition )\n  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )\n  $util.qr($condition.put(\"expression\", \"($condition.expression) AND $conditionFilterExpressions.expression\"))\n  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))\n  #set( $conditionExpressionValues = $util.defaultIfNull($condition.expressionValues, {}) )\n  $util.qr($conditionExpressionValues.putAll($conditionFilterExpressions.expressionValues))\n  #set( $condition.expressionValues = $conditionExpressionValues )\n  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))\n#end\n#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )\n  #set( $condition = {\n  \"expression\": $condition.expression,\n  \"expressionNames\": $condition.expressionNames\n} )\n#end\n{\n  \"version\": \"2018-05-29\",\n  \"operation\": \"DeleteItem\",\n  \"key\": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {\n  \"id\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)\n} #end,\n  \"condition\": $util.toJson($condition)\n}",
     "Mutation.deleteComment.res.vtl": "#if( $ctx.error )\n$util.error($ctx.error.message, $ctx.error.type)\n#else\n$util.toJson($ctx.result)\n#end",
-    "Query.tagCloud.req.vtl": "## [Start] Stash resolver specific context.. **\n$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"tagCloud\"))\n{}\n## [End] Stash resolver specific context.. **",
-    "Query.tagCloud.res.vtl": "$util.toJson($ctx.prev.result)",
-    "Query.recommendedPosts.req.vtl": "## [Start] Stash resolver specific context.. **\n$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"recommendedPosts\"))\n{}\n## [End] Stash resolver specific context.. **",
-    "Query.recommendedPosts.res.vtl": "$util.toJson($ctx.prev.result)"
+    "Query.helloWorld.req.vtl": "## [Start] Stash resolver specific context.. **\n$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"helloWorld\"))\n{}\n## [End] Stash resolver specific context.. **",
+    "Query.helloWorld.res.vtl": "$util.toJson($ctx.prev.result)",
+    "Mutation.goodByeWorld.req.vtl": "## [Start] Stash resolver specific context.. **\n$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"goodByeWorld\"))\n{}\n## [End] Stash resolver specific context.. **",
+    "Mutation.goodByeWorld.res.vtl": "$util.toJson($ctx.prev.result)"
   },
   "functions": {},
   "pipelineFunctions": {
-    "InvokeTagCloudLambdaDataSource.req.vtl": "## [Start] Invoke AWS Lambda data source: TagCloudLambdaDataSource. **\n{\n  \"version\": \"2018-05-29\",\n  \"operation\": \"Invoke\",\n  \"payload\": {\n      \"typeName\": \"$ctx.stash.get(\"typeName\")\",\n      \"fieldName\": \"$ctx.stash.get(\"fieldName\")\",\n      \"arguments\": $util.toJson($ctx.arguments),\n      \"identity\": $util.toJson($ctx.identity),\n      \"source\": $util.toJson($ctx.source),\n      \"request\": $util.toJson($ctx.request),\n      \"prev\": $util.toJson($ctx.prev)\n  }\n}\n## [End] Invoke AWS Lambda data source: TagCloudLambdaDataSource. **",
-    "InvokeTagCloudLambdaDataSource.res.vtl": "## [Start] Handle error or return result. **\n#if( $ctx.error )\n  $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.toJson($ctx.result)\n## [End] Handle error or return result. **",
-    "InvokeRecommendedPostsLambdaDataSource.req.vtl": "## [Start] Invoke AWS Lambda data source: RecommendedPostsLambdaDataSource. **\n{\n  \"version\": \"2018-05-29\",\n  \"operation\": \"Invoke\",\n  \"payload\": {\n      \"typeName\": \"$ctx.stash.get(\"typeName\")\",\n      \"fieldName\": \"$ctx.stash.get(\"fieldName\")\",\n      \"arguments\": $util.toJson($ctx.arguments),\n      \"identity\": $util.toJson($ctx.identity),\n      \"source\": $util.toJson($ctx.source),\n      \"request\": $util.toJson($ctx.request),\n      \"prev\": $util.toJson($ctx.prev)\n  }\n}\n## [End] Invoke AWS Lambda data source: RecommendedPostsLambdaDataSource. **",
-    "InvokeRecommendedPostsLambdaDataSource.res.vtl": "## [Start] Handle error or return result. **\n#if( $ctx.error )\n  $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.toJson($ctx.result)\n## [End] Handle error or return result. **"
+    "InvokeHelloWorldLambdaDataSource.req.vtl": "## [Start] Invoke AWS Lambda data source: HelloWorldLambdaDataSource. **\n{\n  \"version\": \"2018-05-29\",\n  \"operation\": \"Invoke\",\n  \"payload\": {\n      \"typeName\": \"$ctx.stash.get(\"typeName\")\",\n      \"fieldName\": \"$ctx.stash.get(\"fieldName\")\",\n      \"arguments\": $util.toJson($ctx.arguments),\n      \"identity\": $util.toJson($ctx.identity),\n      \"source\": $util.toJson($ctx.source),\n      \"request\": $util.toJson($ctx.request),\n      \"prev\": $util.toJson($ctx.prev)\n  }\n}\n## [End] Invoke AWS Lambda data source: HelloWorldLambdaDataSource. **",
+    "InvokeHelloWorldLambdaDataSource.res.vtl": "## [Start] Handle error or return result. **\n#if( $ctx.error )\n  $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.toJson($ctx.result)\n## [End] Handle error or return result. **",
+    "InvokeGoodByeWorldLambdaDataSource.req.vtl": "## [Start] Invoke AWS Lambda data source: GoodByeWorldLambdaDataSource. **\n{\n  \"version\": \"2018-05-29\",\n  \"operation\": \"Invoke\",\n  \"payload\": {\n      \"typeName\": \"$ctx.stash.get(\"typeName\")\",\n      \"fieldName\": \"$ctx.stash.get(\"fieldName\")\",\n      \"arguments\": $util.toJson($ctx.arguments),\n      \"identity\": $util.toJson($ctx.identity),\n      \"source\": $util.toJson($ctx.source),\n      \"request\": $util.toJson($ctx.request),\n      \"prev\": $util.toJson($ctx.prev)\n  }\n}\n## [End] Invoke AWS Lambda data source: GoodByeWorldLambdaDataSource. **",
+    "InvokeGoodByeWorldLambdaDataSource.res.vtl": "## [Start] Handle error or return result. **\n#if( $ctx.error )\n  $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.toJson($ctx.result)\n## [End] Handle error or return result. **"
   },
-  "schema": "type Blog {\n  blogId: String!\n  name: String!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime!\n}\n\ntype BlogPost {\n  blogId: String!\n  blogPostId: String!\n  title: String!\n  body: String!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime!\n}\n\ntype Comment {\n  blogPostId: String!\n  commentId: String!\n  body: String!\n  publishDate: Int!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime!\n}\n\ntype TagCloud {\n  size: Int!\n  tag: String!\n}\n\ntype Query {\n  tagCloud(blogId: String!): [TagCloud]\n  recommendedPosts(blogPostId: String!): [BlogPost]\n  getBlog(blogId: String!): Blog\n  listBlogs(blogId: String, filter: ModelBlogFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogConnection\n  getBlogPost(blogId: String!, blogPostId: String!): BlogPost\n  listBlogPosts(blogId: String, blogPostId: ModelStringKeyConditionInput, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection\n  getComment(blogPostId: String!, commentId: String!): Comment\n  listComments(blogPostId: String, commentId: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection\n}\n\nenum ModelSortDirection {\n  ASC\n  DESC\n}\n\ntype ModelBlogConnection {\n  items: [Blog]\n  nextToken: String\n}\n\ninput ModelStringFilterInput {\n  ne: String\n  eq: String\n  le: String\n  lt: String\n  ge: String\n  gt: String\n  contains: String\n  notContains: String\n  between: [String]\n  beginsWith: String\n}\n\ninput ModelIDFilterInput {\n  ne: ID\n  eq: ID\n  le: ID\n  lt: ID\n  ge: ID\n  gt: ID\n  contains: ID\n  notContains: ID\n  between: [ID]\n  beginsWith: ID\n}\n\ninput ModelIntFilterInput {\n  ne: Int\n  eq: Int\n  le: Int\n  lt: Int\n  ge: Int\n  gt: Int\n  between: [Int]\n}\n\ninput ModelFloatFilterInput {\n  ne: Float\n  eq: Float\n  le: Float\n  lt: Float\n  ge: Float\n  gt: Float\n  between: [Float]\n}\n\ninput ModelBooleanFilterInput {\n  ne: Boolean\n  eq: Boolean\n}\n\ninput ModelBlogFilterInput {\n  blogId: ModelStringFilterInput\n  name: ModelStringFilterInput\n  and: [ModelBlogFilterInput]\n  or: [ModelBlogFilterInput]\n  not: ModelBlogFilterInput\n}\n\ninput CreateBlogInput {\n  blogId: String!\n  name: String!\n}\n\ninput UpdateBlogInput {\n  blogId: String!\n  name: String\n}\n\ninput DeleteBlogInput {\n  blogId: String!\n}\n\ntype Mutation {\n  createBlog(input: CreateBlogInput!): Blog\n  updateBlog(input: UpdateBlogInput!): Blog\n  deleteBlog(input: DeleteBlogInput!): Blog\n  createBlogPost(input: CreateBlogPostInput!): BlogPost\n  updateBlogPost(input: UpdateBlogPostInput!): BlogPost\n  deleteBlogPost(input: DeleteBlogPostInput!): BlogPost\n  createComment(input: CreateCommentInput!): Comment\n  updateComment(input: UpdateCommentInput!): Comment\n  deleteComment(input: DeleteCommentInput!): Comment\n}\n\ntype Subscription {\n  onCreateBlog: Blog @aws_subscribe(mutations: [\"createBlog\"])\n  onUpdateBlog: Blog @aws_subscribe(mutations: [\"updateBlog\"])\n  onDeleteBlog: Blog @aws_subscribe(mutations: [\"deleteBlog\"])\n  onCreateBlogPost: BlogPost @aws_subscribe(mutations: [\"createBlogPost\"])\n  onUpdateBlogPost: BlogPost @aws_subscribe(mutations: [\"updateBlogPost\"])\n  onDeleteBlogPost: BlogPost @aws_subscribe(mutations: [\"deleteBlogPost\"])\n  onCreateComment: Comment @aws_subscribe(mutations: [\"createComment\"])\n  onUpdateComment: Comment @aws_subscribe(mutations: [\"updateComment\"])\n  onDeleteComment: Comment @aws_subscribe(mutations: [\"deleteComment\"])\n}\n\ntype ModelBlogPostConnection {\n  items: [BlogPost]\n  nextToken: String\n}\n\ninput ModelBlogPostFilterInput {\n  blogId: ModelStringFilterInput\n  blogPostId: ModelStringFilterInput\n  title: ModelStringFilterInput\n  body: ModelStringFilterInput\n  and: [ModelBlogPostFilterInput]\n  or: [ModelBlogPostFilterInput]\n  not: ModelBlogPostFilterInput\n}\n\ninput CreateBlogPostInput {\n  blogId: String!\n  blogPostId: String!\n  title: String!\n  body: String!\n}\n\ninput UpdateBlogPostInput {\n  blogId: String!\n  blogPostId: String!\n  title: String\n  body: String\n}\n\ninput DeleteBlogPostInput {\n  blogId: String!\n  blogPostId: String!\n}\n\ntype ModelCommentConnection {\n  items: [Comment]\n  nextToken: String\n}\n\ninput ModelCommentFilterInput {\n  blogPostId: ModelStringFilterInput\n  commentId: ModelStringFilterInput\n  body: ModelStringFilterInput\n  publishDate: ModelIntFilterInput\n  and: [ModelCommentFilterInput]\n  or: [ModelCommentFilterInput]\n  not: ModelCommentFilterInput\n}\n\ninput CreateCommentInput {\n  blogPostId: String!\n  commentId: String!\n  body: String!\n  publishDate: Int!\n}\n\ninput UpdateCommentInput {\n  blogPostId: String!\n  commentId: String!\n  body: String\n  publishDate: Int\n}\n\ninput DeleteCommentInput {\n  blogPostId: String!\n  commentId: String!\n}\n\ninput ModelStringKeyConditionInput {\n  eq: String\n  le: String\n  lt: String\n  ge: String\n  gt: String\n  between: [String]\n  beginsWith: String\n}\n"
+  "schema": "type Blog {\n  blogId: String!\n  name: String!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime!\n}\n\ntype BlogPost {\n  blogId: String!\n  blogPostId: String!\n  title: String!\n  body: String!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime!\n}\n\ntype Comment {\n  blogPostId: String!\n  commentId: String!\n  body: String!\n  publishDate: Int!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime!\n}\n\ntype TagCloud {\n  size: Int!\n  tag: String!\n}\n\ntype Query {\n  helloWorld(blogId: String!): String\n  getBlog(blogId: String!): Blog\n  listBlogs(blogId: String, filter: ModelBlogFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogConnection\n  getBlogPost(blogId: String!, blogPostId: String!): BlogPost\n  listBlogPosts(blogId: String, blogPostId: ModelStringKeyConditionInput, filter: ModelBlogPostFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelBlogPostConnection\n  getComment(blogPostId: String!, commentId: String!): Comment\n  listComments(blogPostId: String, commentId: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection\n}\n\ntype Mutation {\n  goodByeWorld(blogId: String!): String\n  createBlog(input: CreateBlogInput!): Blog\n  updateBlog(input: UpdateBlogInput!): Blog\n  deleteBlog(input: DeleteBlogInput!): Blog\n  createBlogPost(input: CreateBlogPostInput!): BlogPost\n  updateBlogPost(input: UpdateBlogPostInput!): BlogPost\n  deleteBlogPost(input: DeleteBlogPostInput!): BlogPost\n  createComment(input: CreateCommentInput!): Comment\n  updateComment(input: UpdateCommentInput!): Comment\n  deleteComment(input: DeleteCommentInput!): Comment\n}\n\nenum ModelSortDirection {\n  ASC\n  DESC\n}\n\ntype ModelBlogConnection {\n  items: [Blog]\n  nextToken: String\n}\n\ninput ModelStringFilterInput {\n  ne: String\n  eq: String\n  le: String\n  lt: String\n  ge: String\n  gt: String\n  contains: String\n  notContains: String\n  between: [String]\n  beginsWith: String\n}\n\ninput ModelIDFilterInput {\n  ne: ID\n  eq: ID\n  le: ID\n  lt: ID\n  ge: ID\n  gt: ID\n  contains: ID\n  notContains: ID\n  between: [ID]\n  beginsWith: ID\n}\n\ninput ModelIntFilterInput {\n  ne: Int\n  eq: Int\n  le: Int\n  lt: Int\n  ge: Int\n  gt: Int\n  between: [Int]\n}\n\ninput ModelFloatFilterInput {\n  ne: Float\n  eq: Float\n  le: Float\n  lt: Float\n  ge: Float\n  gt: Float\n  between: [Float]\n}\n\ninput ModelBooleanFilterInput {\n  ne: Boolean\n  eq: Boolean\n}\n\ninput ModelBlogFilterInput {\n  blogId: ModelStringFilterInput\n  name: ModelStringFilterInput\n  and: [ModelBlogFilterInput]\n  or: [ModelBlogFilterInput]\n  not: ModelBlogFilterInput\n}\n\ninput CreateBlogInput {\n  blogId: String!\n  name: String!\n}\n\ninput UpdateBlogInput {\n  blogId: String!\n  name: String\n}\n\ninput DeleteBlogInput {\n  blogId: String!\n}\n\ntype Subscription {\n  onCreateBlog: Blog @aws_subscribe(mutations: [\"createBlog\"])\n  onUpdateBlog: Blog @aws_subscribe(mutations: [\"updateBlog\"])\n  onDeleteBlog: Blog @aws_subscribe(mutations: [\"deleteBlog\"])\n  onCreateBlogPost: BlogPost @aws_subscribe(mutations: [\"createBlogPost\"])\n  onUpdateBlogPost: BlogPost @aws_subscribe(mutations: [\"updateBlogPost\"])\n  onDeleteBlogPost: BlogPost @aws_subscribe(mutations: [\"deleteBlogPost\"])\n  onCreateComment: Comment @aws_subscribe(mutations: [\"createComment\"])\n  onUpdateComment: Comment @aws_subscribe(mutations: [\"updateComment\"])\n  onDeleteComment: Comment @aws_subscribe(mutations: [\"deleteComment\"])\n}\n\ntype ModelBlogPostConnection {\n  items: [BlogPost]\n  nextToken: String\n}\n\ninput ModelBlogPostFilterInput {\n  blogId: ModelStringFilterInput\n  blogPostId: ModelStringFilterInput\n  title: ModelStringFilterInput\n  body: ModelStringFilterInput\n  and: [ModelBlogPostFilterInput]\n  or: [ModelBlogPostFilterInput]\n  not: ModelBlogPostFilterInput\n}\n\ninput CreateBlogPostInput {\n  blogId: String!\n  blogPostId: String!\n  title: String!\n  body: String!\n}\n\ninput UpdateBlogPostInput {\n  blogId: String!\n  blogPostId: String!\n  title: String\n  body: String\n}\n\ninput DeleteBlogPostInput {\n  blogId: String!\n  blogPostId: String!\n}\n\ntype ModelCommentConnection {\n  items: [Comment]\n  nextToken: String\n}\n\ninput ModelCommentFilterInput {\n  blogPostId: ModelStringFilterInput\n  commentId: ModelStringFilterInput\n  body: ModelStringFilterInput\n  publishDate: ModelIntFilterInput\n  and: [ModelCommentFilterInput]\n  or: [ModelCommentFilterInput]\n  not: ModelCommentFilterInput\n}\n\ninput CreateCommentInput {\n  blogPostId: String!\n  commentId: String!\n  body: String!\n  publishDate: Int!\n}\n\ninput UpdateCommentInput {\n  blogPostId: String!\n  commentId: String!\n  body: String\n  publishDate: Int\n}\n\ninput DeleteCommentInput {\n  blogPostId: String!\n  commentId: String!\n}\n\ninput ModelStringKeyConditionInput {\n  eq: String\n  le: String\n  lt: String\n  ge: String\n  gt: String\n  between: [String]\n  beginsWith: String\n}\n"
 }

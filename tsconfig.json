@@ -4,7 +4,7 @@
 		"module": "commonjs",
 		"lib": ["es2019"],
 		"declaration": true,
-		"strict": true,
+		"strict": false,
 		"noImplicitAny": false,
 		"noLib": false,
 		"emitDecoratorMetadata": true,
@@ -23,7 +23,9 @@
 		"typeRoots": ["./node_modules/@types"],
 		"outDir": "./dist",
 		"esModuleInterop": true,
-		"rootDirs": ["src"]
+		"rootDirs": ["src"],
+		"moduleResolution" : "Node"
+
 	},
-	"exclude": ["node_modules", "cdk.out", "./lib/**/*"]
+	"exclude": ["node_modules", "cdk.out", "./lib/**/*", "./dist"]
 }

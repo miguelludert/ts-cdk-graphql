@@ -1,6 +1,7 @@
 import { Construct } from "@aws-cdk/core";
 import { DynamoDBModelTransformer } from "graphql-dynamodb-transformer";
 import { ModelConnectionTransformer } from "graphql-connection-transformer";
+import { FunctionTransformer } from "graphql-function-transformer";
 import { ModelAuthTransformer } from "graphql-auth-transformer";
 import { KeyTransformer } from "graphql-key-transformer";
 import { ITransformer } from "graphql-transformer-core";
@@ -12,8 +13,8 @@ import {
 	I_AppSyncGqlSchemaProps,
 } from "./interfaces";
 import { createDynamoDataSource } from "../providers/dynamo";
-import { cast } from "./utils";
-import { dump } from "../providers/utils";
+import { createLambdaDataSource } from "../providers/lambda";
+import { cast, info } from "./utils";
 
 // data sources must be in typescript
 export class DynamoDatasourceProvider implements I_DatasourceProvider {
@@ -31,7 +32,24 @@ export class DynamoDatasourceProvider implements I_DatasourceProvider {
 		api: GraphqlApi,
 		cfSchema: any,
 	): I_ConstructMap {
-		return cast<I_ConstructMap>(createDynamoDataSource(scope, api, cfSchema));
+		info("dynamo provider");
+		return cast<I_ConstructMap>(createDynamoDataSource(scope, props, api, cfSchema));
+	}
+}
+
+// data sources must be in typescript
+export class LambdaDatasourceProvider implements I_DatasourceProvider {
+	getTransformer(): ITransformer[] {
+		return [cast<ITransformer>(new FunctionTransformer())]
+	}
+	createResources(
+		scope: Construct,
+		props: I_AppSyncGqlSchemaProps,
+		api: GraphqlApi,
+		cfSchema: any,
+	): I_ConstructMap {
+		info("lambda provider");
+		return cast<I_ConstructMap>(createLambdaDataSource(scope, props, api, cfSchema));
 	}
 }
 
