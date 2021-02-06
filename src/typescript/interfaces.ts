@@ -50,6 +50,8 @@ export interface I_AppSyncGqlSchemaProps {
 	defaults?: I_ConstructSetupProps;
 	overrides?: I_ConstructSetupProps;
 	datasourceProviders?: I_DatasourceProvider[];
+	outputGraphqlSchemaFilePath? : string;
+	outputCfnSchemaFilePath? : string;
 }
 
 export interface I_CreateConstructContext {

@@ -10,6 +10,7 @@ import {
 import { createResolversAndFunctionsFromSchema } from "../providers/functions";
 import deepmerge from "deepmerge";
 import { cast, readFileSync, createConstruct, info } from "./utils";
+import { writeFileSync } from "fs";
 import * as self from "./app-sync-gql-schema";
 import { helpInformation } from "commander";
 
@@ -33,11 +34,29 @@ export class AppSyncGqlSchema extends NestedStack {
 		const schemaText = self.getSchemaText(props);
 		info("getCfSchema");
 		const cfSchema = self.getCfSchema(schemaText, providers);
+
+		// output as soon as schemas are available for debugging
+		if (props.outputGraphqlSchemaFilePath) {
+			writeFileSync(props.outputGraphqlSchemaFilePath, cfSchema.schema, "utf8");
+		}
+
+		if (props.outputCfnSchemaFilePath) {
+			writeFileSync(
+				props.outputCfnSchemaFilePath,
+				JSON.stringify(cfSchema, null, 2),
+				"utf8",
+			);
+		}
+
 		info("createApi");
 		const api = self.createApi(scope, props, cfSchema.schema);
 		info("createResources");
 		const datasources = createResources(this, props, api, providers, cfSchema);
 		// Object.assign(this, datasources);
+
+		//set graphqlApiUrl
+		//set
+		//throw new Error("STOP");
 	}
 }
 
@@ -72,7 +91,7 @@ export const createResources = (
 		provider.createResources(scope, props, api, cfSchema),
 	);
 	const { funcs, resolvers } = <any>(
-		createResolversAndFunctionsFromSchema(cfSchema, resources)
+		createResolversAndFunctionsFromSchema(scope, props, api, cfSchema, resources)
 	);
 };
 
