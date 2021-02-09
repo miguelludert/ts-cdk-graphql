@@ -1,0 +1,10 @@
+export function createResolversAndFunctionsFromSchema(scope: any, props: any, api: any, cfSchema: any, resources: any): any[];
+export const createResolversAndFunctionsFromStack: any;
+export const createResolversFromResource: any;
+export const createPipelineResolversFromResource: any;
+export const createFunctionsFromResource: any;
+export const getDataSourceName: any;
+export const getFieldName: any;
+export const getTypeName: any;
+export function getRequestResolverName(resource: any): any;
+export function getResponseResolverName(resource: any): any;
