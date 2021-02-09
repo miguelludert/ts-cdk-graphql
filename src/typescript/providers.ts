@@ -40,7 +40,9 @@ export class DynamoDatasourceProvider implements I_DatasourceProvider {
 // data sources must be in typescript
 export class LambdaDatasourceProvider implements I_DatasourceProvider {
 	getTransformer(): ITransformer[] {
-		return [cast<ITransformer>(new FunctionTransformer())]
+		return [
+			new FunctionTransformer()
+		]
 	}
 	createResources(
 		scope: Construct,
@@ -49,6 +51,25 @@ export class LambdaDatasourceProvider implements I_DatasourceProvider {
 		cfSchema: any,
 	): I_ConstructMap {
 		info("lambda provider");
+		return cast<I_ConstructMap>(createLambdaDataSource(scope, props, api, cfSchema));
+	}
+}
+
+// data sources must be in typescript
+export class AuthDatasourceProvider implements I_DatasourceProvider {
+	getTransformer(): ITransformer[] {
+		return [
+			new ModelAuthTransformer()
+		]
+	}
+	createResources(
+		scope: Construct,
+		props: I_AppSyncGqlSchemaProps,
+		api: GraphqlApi,
+		cfSchema: any,
+	): I_ConstructMap {
+		// info("lambda provider");
+		throw new Error("asdfasdf")
 		return cast<I_ConstructMap>(createLambdaDataSource(scope, props, api, cfSchema));
 	}
 }

@@ -3,6 +3,7 @@ import { paramCase } from 'change-case';
 import { FieldLogLevel } from "@aws-cdk/aws-appsync";
 import { Runtime, Code } from "@aws-cdk/aws-lambda";
 import { join } from 'path';
+import { Duration } from '@aws-cdk/core';
 
 export const functionSetup = {
 	onProps: (scope, props, context) => {
@@ -28,18 +29,30 @@ export const functionSetup = {
 			functionName : name,
 			code : Code.fromAsset(join(lambdaFunctionCodeDir,functionName)),
 			handler : lambdaHandlerName || "index.handler",
-			runtime : lambdaRuntime || Runtime.NODEJS_12_X
+			runtime : lambdaRuntime || Runtime.NODEJS_12_X,
+			timeout : Duration.seconds(60)
 		};
 		return result;
 	},
-	onConstruct: () => {},
+	onConstruct: (scope, construct) => {
+
+		// construct
+		// console.info("FUNCTION CONSTRUCT --- FUNCTION CONSTRUCT --- FUNCTION CONSTRUCT --- FUNCTION CONSTRUCT", args);
+
+	},
 };
 
 export const graphqlApiSetup = {
 	onProps: (scope, props, context) => {
-		return {
+		const apiProps = {
 			name : context.name
 		};
+
+		if(props && props.authorizationConfig) {
+			console.info("AUTH")
+			apiProps.authorizationConfig = props.authorizationConfig;
+		}
+		return apiProps;
 	},
 	onConstruct: () => {},
 };

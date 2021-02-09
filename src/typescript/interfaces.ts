@@ -1,5 +1,5 @@
 import { Construct } from "@aws-cdk/core";
-import { GraphqlApi } from "@aws-cdk/aws-appsync";
+import { AuthorizationConfig, GraphqlApi } from "@aws-cdk/aws-appsync";
 import { ITransformer } from "graphql-transformer-core";
 
 export interface I_ConstructSetupProps {
@@ -52,6 +52,7 @@ export interface I_AppSyncGqlSchemaProps {
 	datasourceProviders?: I_DatasourceProvider[];
 	outputGraphqlSchemaFilePath? : string;
 	outputCfnSchemaFilePath? : string;
+	authorizationConfig? : AuthorizationConfig;
 }
 
 export interface I_CreateConstructContext {

@@ -6,6 +6,7 @@ import { NO_SCHEMA_ERROR_MESSAGE } from "../constants";
 import {
 	DynamoDatasourceProvider,
 	LambdaDatasourceProvider,
+	//AuthDatasourceProvider
 } from "./providers";
 import { createResolversAndFunctionsFromSchema } from "../providers/functions";
 import deepmerge from "deepmerge";
@@ -13,11 +14,11 @@ import { cast, readFileSync, createConstruct, info } from "./utils";
 import { writeFileSync } from "fs";
 import * as self from "./app-sync-gql-schema";
 import { helpInformation } from "commander";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { Function } from "@aws-cdk/aws-lambda";
+import { Lambda } from "aws-sdk";
 
-export const defaultDatasourceProviders: I_DatasourceProvider[] = [
-	new DynamoDatasourceProvider(),
-	new LambdaDatasourceProvider(),
-];
+
 
 export class AppSyncGqlSchema extends NestedStack {
 	constructor(scope: Construct, name: string, props: I_AppSyncGqlSchemaProps) {
@@ -63,6 +64,11 @@ export class AppSyncGqlSchema extends NestedStack {
 export const getProviders = (
 	props: I_AppSyncGqlSchemaProps,
 ): I_DatasourceProvider[] => {
+	const defaultDatasourceProviders: I_DatasourceProvider[] = [
+		new DynamoDatasourceProvider(),
+		new LambdaDatasourceProvider(),
+		//new AuthDatasourceProvider(),
+	];
 	const datasourceProviders =
 		props && props.datasourceProviders ? props.datasourceProviders : [];
 	return [...defaultDatasourceProviders, ...datasourceProviders];
@@ -90,6 +96,15 @@ export const createResources = (
 	const resources = providers.flatMap((provider) =>
 		provider.createResources(scope, props, api, cfSchema),
 	);
+	const tables = resources.filter(f => f.table).map(f => f.table);
+	const lambdas = resources.filter(f => f.lambda).map(f => f.lambda);
+
+	lambdas.forEach((lambda : Function) => { 
+		tables.forEach((table : Table) => {
+			table.grantFullAccess(lambda);
+		})
+	})
+
 	const { funcs, resolvers } = <any>(
 		createResolversAndFunctionsFromSchema(scope, props, api, cfSchema, resources)
 	);

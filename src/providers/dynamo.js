@@ -10,7 +10,7 @@ export const createDynamoDataSource = (scope, stackProps, api, cfSchema) => {
 		DATASOURCE_TYPE_DYNAMO,
 		cfSchema
 	);
-	const bob = datasourceCfn.map(createSingleDynamoTableProp);
+	const bob = datasourceCfn.map(self.createSingleDynamoTableProp(stackProps));
 	const datasources = bob.map(self.createDynamoResources(scope, api));
 	return datasources;
 };
@@ -38,11 +38,17 @@ export const createDynamoResources = curry((scope, api, props) => {
 });
 
 export const createSingleDynamoTableProp = curry(
-	({ stackName, resourcePairs, datasourceName, datasourceCfn }) => {
+	(props, { stackName, resourcePairs, datasourceName, datasourceCfn }) => {
 		info("createSingleDynamoTableProp");
-		const [tableName, tableCfn] = resourcePairs.find(
+		const [tableNameRaw, tableCfn] = resourcePairs.find(
 			([resourceName, resourceCfn]) => resourceCfn.Type == RESOURCE_TYPE_DYNAMO,
 		);
+
+		let tableName = `${tableNameRaw}-table`;
+		if(props && props.namingConvention) { 
+			tableName = props.namingConvention(tableNameRaw, 'table');
+		}
+
 		const {
 			DeletionPolicy,
 			KeySchema,
@@ -50,7 +56,7 @@ export const createSingleDynamoTableProp = curry(
 			LocalSecondaryIndexes,
 			GlobalSecondaryIndexes,
 		} = tableCfn.Properties;
-		const props = {
+		const result = {
 			stackName,
 			datasourceCfn,
 			datasourceName,
@@ -64,7 +70,7 @@ export const createSingleDynamoTableProp = curry(
 			...self.getIndex("GSI", GlobalSecondaryIndexes),
 			...self.getIndex("LSI", LocalSecondaryIndexes),
 		};
-		return props;
+		return result;
 	},
 );
 
