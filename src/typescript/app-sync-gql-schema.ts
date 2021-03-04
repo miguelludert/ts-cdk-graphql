@@ -4,6 +4,7 @@ import { GraphQLTransform } from "graphql-transformer-core";
 import { I_AppSyncGqlSchemaProps, I_DatasourceProvider } from "./interfaces";
 import { NO_SCHEMA_ERROR_MESSAGE } from "../constants";
 import {
+	AuthDatasourceProvider,
 	DynamoDatasourceProvider,
 	LambdaDatasourceProvider,
 	//AuthDatasourceProvider
@@ -18,9 +19,10 @@ import { Table } from "@aws-cdk/aws-dynamodb";
 import { Function } from "@aws-cdk/aws-lambda";
 import { Lambda } from "aws-sdk";
 
-
-
 export class AppSyncGqlSchema extends NestedStack {
+
+	api : GraphqlApi;
+
 	constructor(scope: Construct, name: string, props: I_AppSyncGqlSchemaProps) {
 		super(scope, name);
 
@@ -34,7 +36,7 @@ export class AppSyncGqlSchema extends NestedStack {
 		info("getSchemaText");
 		const schemaText = self.getSchemaText(props);
 		info("getCfSchema");
-		const cfSchema = self.getCfSchema(schemaText, providers);
+		const cfSchema = self.getCfSchema(schemaText, providers, props);
 
 		// output as soon as schemas are available for debugging
 		if (props.outputGraphqlSchemaFilePath) {
@@ -49,8 +51,10 @@ export class AppSyncGqlSchema extends NestedStack {
 			);
 		}
 
-		info("createApi");
+		info("createApi", "PROPS", !!props, !!props.authorizationConfig);
 		const api = self.createApi(scope, props, cfSchema.schema);
+		this.api = api;
+
 		info("createResources");
 		const datasources = createResources(this, props, api, providers, cfSchema);
 		// Object.assign(this, datasources);
@@ -67,7 +71,7 @@ export const getProviders = (
 	const defaultDatasourceProviders: I_DatasourceProvider[] = [
 		new DynamoDatasourceProvider(),
 		new LambdaDatasourceProvider(),
-		//new AuthDatasourceProvider(),
+		new AuthDatasourceProvider(),
 	];
 	const datasourceProviders =
 		props && props.datasourceProviders ? props.datasourceProviders : [];
@@ -95,7 +99,7 @@ export const createResources = (
 ) => {
 	const resources = providers.flatMap((provider) =>
 		provider.createResources(scope, props, api, cfSchema),
-	);
+	).filter(f => f);
 	const tables = resources.filter(f => f.table).map(f => f.table);
 	const lambdas = resources.filter(f => f.lambda).map(f => f.lambda);
 
@@ -113,9 +117,10 @@ export const createResources = (
 export const getCfSchema = (
 	schemaText: string,
 	providers: I_DatasourceProvider[],
+	props: I_AppSyncGqlSchemaProps,
 ): any => {
 	const transformers = providers.flatMap((provider) =>
-		provider.getTransformer(),
+		provider.getTransformer(props),
 	);
 	const gqlTransform = new GraphQLTransform({
 		transformers,
@@ -129,7 +134,7 @@ export const createApi = (
 	props: I_AppSyncGqlSchemaProps,
 	schemaText: string,
 ): GraphqlApi => {
-	const result = createConstruct(scope, props, GraphqlApi, "gql-api");
+	const result = createConstruct(scope, props, GraphqlApi, "");
 	// this is a hack for the CFN to receive the schema text.
 	result.schemaResource.definition = schemaText;
 	return result;
